@@ -280,10 +280,10 @@ function renderAcl() {
       (r, i) => `
         <tr>
             <td style="color: ${r.action === "ALLOW" ? "#0f0" : "#f33"}">${r.action}</td>
-            <td>${r.origin}</td>
-            <td>${r.shape}</td>
-            <td>${r.color}</td>
-            <td>${r.size}</td>
+            <td>${r.origin.substring(0, 3)}</td>
+            <td>${r.shape.substring(0, 3)}</td>
+            <td>${r.color.substring(0, 3)}</td>
+            <td>${r.size.substring(0, 3)}</td>
             <td>${r.rot === "*" ? "*" : r.rot + "°"}</td>
             <td><button onclick="removeAclRule(${i})">X</button></td>
         </tr>

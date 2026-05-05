@@ -9,7 +9,9 @@
     <body>
         <h1>// Network Perimeter Defense</h1>
 
-        <canvas id="gameCanvas" width="800" height="600"></canvas>
+        <div class="canvas-wrapper">
+            <canvas id="gameCanvas" width="800" height="600"></canvas>
+        </div>
 
         <div class="dashboard">
             <div class="panel">
@@ -26,7 +28,7 @@
                 <div class="stat-row">
                     <span>Traffic Load:</span> <span id="valTraffic">Low</span>
                 </div>
-                <div class="stat-row">
+                <div class="stat-row" style="margin-top: auto">
                     <span>Audio Matrix:</span>
                     <button id="btnMusic" onclick="toggleMusic()">OFF</button>
                 </div>
@@ -35,24 +37,24 @@
             <div class="panel">
                 <h2>Upgrades</h2>
                 <div class="stat-row">
-                    <span>Bandwidth (Increases Traffic)</span>
+                    <span>Bandwidth</span>
                     <button id="btnUpgradeTraffic" onclick="upgradeTraffic()">
                         Buy ($50)
                     </button>
                 </div>
                 <div class="stat-row">
-                    <span>DPI Module (Auto-drop malware)</span>
+                    <span>DPI Module</span>
                     <button id="btnUpgradeDPI" onclick="upgradeDPI()">
                         Buy ($300)
                     </button>
                 </div>
                 <div class="stat-row">
-                    <span>Pattern Analysis DB (Auto-drop known threats)</span>
+                    <span>Pattern Analysis DB</span>
                     <button id="btnUpgradeIntel" onclick="upgradeThreatIntel()">
                         Buy ($500)
                     </button>
                 </div>
-                <div class="stat-row">
+                <div class="stat-row" style="margin-top: auto">
                     <span>Repair System</span>
                     <button id="btnRepair" onclick="repairSystem()">
                         Repair ($100)
@@ -61,76 +63,78 @@
             </div>
 
             <div class="panel">
-                <h2>Access Control List (ACL)</h2>
-                <div
-                    style="
-                        margin-bottom: 10px;
-                        display: flex;
-                        flex-wrap: wrap;
-                        gap: 5px;
-                        align-items: center;
-                    "
-                >
-                    <select id="aclAction">
-                        <option value="ALLOW">ALLOW</option>
-                        <option value="DROP">DROP</option>
-                    </select>
-                    Origin:
-                    <select id="aclOrigin">
-                        <option value="*">Any</option>
-                        <option value="North">North</option>
-                        <option value="South">South</option>
-                        <option value="East">East</option>
-                        <option value="West">West</option>
-                    </select>
-                    Shape:
-                    <select id="aclShape">
-                        <option value="*">Any</option>
-                        <option value="Square">Square</option>
-                        <option value="Circle">Circle</option>
-                        <option value="Triangle">Triangle</option>
-                    </select>
-                    Color:
-                    <select id="aclColor">
-                        <option value="*">Any</option>
-                        <option value="Red">Red</option>
-                        <option value="Green">Green</option>
-                        <option value="Blue">Blue</option>
-                    </select>
-                    Size:
-                    <select id="aclSize">
-                        <option value="*">Any</option>
-                        <option value="Small">Small</option>
-                        <option value="Medium">Medium</option>
-                        <option value="Large">Large</option>
-                    </select>
-                    Rot:
-                    <select id="aclRotation">
-                        <option value="*">Any</option>
-                        <option value="0">0°</option>
-                        <option value="90">90°</option>
-                        <option value="180">180°</option>
-                        <option value="270">270°</option>
-                    </select>
+                <h2>Access Control (ACL)</h2>
+                <div class="acl-controls">
+                    <div class="acl-controls-row">
+                        <select id="aclAction" title="Action">
+                            <option value="ALLOW">ALLOW</option>
+                            <option value="DROP">DROP</option>
+                        </select>
+                        <select id="aclOrigin" title="Origin">
+                            <option value="*">Any Origin</option>
+                            <option value="North">North</option>
+                            <option value="South">South</option>
+                            <option value="East">East</option>
+                            <option value="West">West</option>
+                        </select>
+                    </div>
+                    <div class="acl-controls-row">
+                        <select id="aclShape" title="Shape">
+                            <option value="*">Any Shape</option>
+                            <option value="Square">Square</option>
+                            <option value="Circle">Circle</option>
+                            <option value="Triangle">Triangle</option>
+                        </select>
+                        <select id="aclColor" title="Color">
+                            <option value="*">Any Color</option>
+                            <option value="Red">Red</option>
+                            <option value="Green">Green</option>
+                            <option value="Blue">Blue</option>
+                        </select>
+                    </div>
+                    <div class="acl-controls-row">
+                        <select id="aclSize" title="Size">
+                            <option value="*">Any Size</option>
+                            <option value="Small">Small</option>
+                            <option value="Medium">Medium</option>
+                            <option value="Large">Large</option>
+                        </select>
+                        <select id="aclRotation" title="Rotation">
+                            <option value="*">Any Rot</option>
+                            <option value="0">0°</option>
+                            <option value="90">90°</option>
+                            <option value="180">180°</option>
+                            <option value="270">270°</option>
+                        </select>
+                    </div>
                     <button onclick="addAclRule()">Add Rule</button>
                 </div>
-                <table class="acl-table">
-                    <thead>
-                        <tr>
-                            <th>Action</th>
-                            <th>Origin</th>
-                            <th>Shape</th>
-                            <th>Color</th>
-                            <th>Size</th>
-                            <th>Rot</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody id="aclList">
-                        <!-- Rules injected here -->
-                    </tbody>
-                </table>
-                <div style="margin-top: 10px; font-size: 0.8rem; color: #aaa">
+                <div style="overflow-y: auto; flex: 1">
+                    <table class="acl-table">
+                        <thead>
+                            <tr>
+                                <th>Act</th>
+                                <th>Ori</th>
+                                <th>Shp</th>
+                                <th>Col</th>
+                                <th>Siz</th>
+                                <th>Rot</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="aclList">
+                            <!-- Rules injected here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div
+                    style="
+                        margin-top: 5px;
+                        font-size: 0.75rem;
+                        color: #aaa;
+                        text-align: center;
+                    "
+                >
                     Default Policy: DROP ALL
                 </div>
             </div>
