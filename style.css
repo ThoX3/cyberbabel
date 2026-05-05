@@ -1,0 +1,116 @@
+:root {
+    --bg: #050505;
+    --text: #0f0;
+    --border: #3f3;
+    --danger: #f33;
+    --warning: #fa0;
+    --panel-bg: #0a0a0a;
+}
+body {
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: "Courier New", Courier, monospace;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+h1 {
+    margin-top: 0;
+    font-size: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+canvas {
+    background-color: #000;
+    border: 1px solid var(--border);
+    box-shadow: 0 0 10px rgba(51, 255, 51, 0.2);
+    margin-bottom: 20px;
+    max-width: 100%;
+}
+.dashboard {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    width: 100%;
+    max-width: 800px;
+}
+.panel {
+    background: var(--panel-bg);
+    border: 1px solid var(--border);
+    padding: 15px;
+    flex: 1;
+    min-width: 250px;
+}
+.panel h2 {
+    font-size: 1.1rem;
+    margin-top: 0;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 5px;
+}
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+}
+button {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 5px 10px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+}
+button:hover:not(:disabled) {
+    background: var(--text);
+    color: var(--bg);
+}
+button:disabled {
+    border-color: #555;
+    color: #555;
+    cursor: not-allowed;
+}
+input,
+select {
+    background: #000;
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 5px;
+    font-family: inherit;
+    width: 100px;
+}
+.acl-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+.acl-table th,
+.acl-table td {
+    border: 1px solid #333;
+    padding: 5px;
+    text-align: left;
+}
+.log-container {
+    height: 120px;
+    overflow-y: auto;
+    font-size: 0.85rem;
+    border: 1px solid #333;
+    padding: 5px;
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column-reverse;
+}
+.log-entry {
+    margin: 2px 0;
+}
+.log-drop {
+    color: var(--danger);
+}
+.log-allow {
+    color: var(--text);
+}
+.log-alert {
+    color: var(--warning);
+}
