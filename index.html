@@ -141,6 +141,11 @@
 
             <div class="panel">
                 <h2>Traffic Log</h2>
+                <div class="log-filters">
+                    <button onclick="toggleLogType('allow')" id="btnAllow">ALLOW</button>
+                    <button onclick="toggleLogType('drop')" id="btnDrop">DROP</button>
+                    <button onclick="toggleLogType('alert')" id="btnAlert">CRITICAL</button>
+                </div>
                 <div class="log-container" id="sysLog"></div>
             </div>
         </div>

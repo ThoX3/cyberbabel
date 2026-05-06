@@ -183,6 +183,28 @@ class Packet {
   }
 }
 
+let logVisibility = {
+  allow: true,
+  drop: true,
+  alert: true
+};
+
+function toggleLogType(type) {
+  logVisibility[type] = !logVisibility[type];
+
+  const map = {
+    allow: "btnAllow",
+    drop: "btnDrop",
+    alert: "btnAlert"
+  };
+
+  const btn = document.getElementById(map[type]);
+
+  btn.style.opacity = logVisibility[type] ? "1" : "0.4";
+
+  renderLogs();
+}
+
 function addLog(msg, type = "allow") {
   logs.unshift({ msg, type });
   if (logs.length > 50) logs.pop();
@@ -191,10 +213,12 @@ function addLog(msg, type = "allow") {
 
 function renderLogs() {
   const logEl = document.getElementById("sysLog");
+
   logEl.innerHTML = logs
+    .filter(l => logVisibility[l.type])
     .map(
       (l) =>
-        `<div class="log-entry log-${l.type}">[${state.uptime}s] ${l.msg}</div>`,
+        `<div class="log-entry log-${l.type}">[${Math.floor(state.uptime)}s] ${l.msg}</div>`
     )
     .join("");
 }

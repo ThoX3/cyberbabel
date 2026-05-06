@@ -135,6 +135,11 @@ select {
     display: flex;
     flex-direction: column-reverse;
 }
+.log-filters {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 5px;
+}
 .log-entry {
     margin: 2px 0;
 }
