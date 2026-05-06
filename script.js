@@ -8,6 +8,16 @@ let isPlaying = false;
 const bassNotes = [41.2, 41.2, 49.0, 41.2, 55.0, 41.2, 49.0, 58.27];
 let noteIndex = 0;
 
+let isPaused = false;
+document.addEventListener("visibilitychange", () => {
+  isPaused = document.hidden;
+
+  if (!isPaused) {
+    lastTime = performance.now();
+    spawnTimer = 0;
+  }
+});
+
 function playSynthNote() {
   if (!audioCtx) return;
   const osc = audioCtx.createOscillator();
@@ -435,6 +445,10 @@ function drawScenery() {
 }
 
 function gameLoop() {
+    if (isPaused) {
+    requestAnimationFrame(gameLoop);
+    return;
+  }
   if (state.gameOver) {
     ctx.fillStyle = "rgba(0, 0, 0, 0.8)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
