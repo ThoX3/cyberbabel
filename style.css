@@ -46,7 +46,7 @@ canvas {
     display: grid;
     grid-template-columns: repeat(4, 1fr); /* 4 colonnes de largeur égale */
     gap: 15px;
-    height: 280px; /* Hauteur fixe pour que les panneaux restent alignés */
+    height: 450px; /* Hauteur fixe pour que les panneaux restent alignés */
     flex-shrink: 0;
 }
 .panel {
