@@ -71,7 +71,7 @@ let state = {
   integrity: 100,
   money: 0,
   uptime: 0,
-  spawnRate: 0.6, // Seconds between spawns
+  spawnRate: 0.8, // Seconds between spawns
   packetSpeed: 1.5,
   dpiActive: false,
   threatIntelActive: false,
@@ -333,7 +333,7 @@ function upgradeTraffic() {
   if (state.money >= state.trafficCost) {
     state.money -= state.trafficCost;
     state.trafficLevel++;
-    state.spawnRate = Math.max(20, state.spawnRate - 20);
+    state.spawnRate = Math.max(0.01, state.spawnRate - 0.1);
     state.trafficCost = Math.floor(state.trafficCost * 1.8);
     document.getElementById("btnUpgradeTraffic").innerText =
       `Buy ($${state.trafficCost})`;
