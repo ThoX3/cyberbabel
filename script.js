@@ -61,7 +61,7 @@ let state = {
   integrity: 100,
   money: 0,
   uptime: 0,
-  spawnRate: 120, // Frames between spawns
+  spawnRate: 0.6, // Seconds between spawns
   packetSpeed: 1.5,
   dpiActive: false,
   threatIntelActive: false,
@@ -76,8 +76,9 @@ let state = {
 
 let packets = [];
 let rules = [];
-let frameCount = 0;
 let logs = [];
+let lastTime = performance.now();
+let spawnTimer = 0;
 
 const SHAPES = ["Square", "Circle", "Triangle"];
 const COLORS = ["Red", "Green", "Blue"];
@@ -346,7 +347,7 @@ function updateUI() {
     Math.max(0, state.integrity) + "%";
   document.getElementById("valIntegrity").style.color =
     state.integrity < 40 ? "var(--danger)" : "var(--text)";
-  document.getElementById("valMoney").innerText = state.money;
+  document.getElementById("valMoney").innerText = "$" + state.money;
   document.getElementById("valTraffic").innerText = `Lv ${state.trafficLevel}`;
 
   document.getElementById("btnUpgradeTraffic").disabled =
@@ -451,14 +452,28 @@ function gameLoop() {
     return;
   }
 
-  frameCount++;
-  if (frameCount % 60 === 0) {
-    state.uptime++;
-    document.getElementById("valUptime").innerText = state.uptime;
-  }
+  // Timer
+  const now = performance.now();
+  const delta = (now - lastTime) / 1000; // seconds
+  lastTime = now;
 
-  if (frameCount % state.spawnRate === 0) {
+  state.uptime += delta;
+
+  const totalSeconds = Math.floor(state.uptime);
+  const minutes = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
+  const seconds = (totalSeconds % 60).toString().padStart(2, '0');
+
+  document.getElementById("valUptime").innerText = `${minutes}m${seconds}s`;
+
+
+  // Spawn Logic
+  spawnTimer += delta;
+
+  const spawnInterval = state.spawnRate;
+
+  while (spawnTimer >= spawnInterval) {
     spawnPacket();
+    spawnTimer -= spawnInterval;
   }
 
   ctx.save();
