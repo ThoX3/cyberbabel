@@ -232,6 +232,8 @@ let state = {
   packetSpeed: 1.5,
   dpiActive: false,
   threatIntelActive: false,
+  dpiPourcentage: 0.3,
+  threatIntelPourcentage: 0.6,
   trafficLevel: 1,
   trafficCost: 50,
   dpiCost: 300,
@@ -428,24 +430,18 @@ function renderLogs() {
 function evaluatePacket(packet) {
   packet.evaluated = true;
 
-  if (state.threatIntelActive && packet.isKnownThreat) {
-    packet.status = "DROPPED";
-    addLog(
-      `Pattern DB Blocked ${getPacketDescription(packet)}`,
-      "drop",
-    );
-    state.money += 2;
-    return;
-  }
-
   if (state.dpiActive && packet.isMalware) {
-    packet.status = "DROPPED";
-    addLog(
-      `DPI Blocked Malware: ${getPacketDescription(packet)}`,
-      "drop",
-    );
-    state.money += 1;
-    return;
+      let percentage = state.dpiPourcentage;
+      if (state.threatIntelActive) percentage = state.threatIntelPourcentage;
+      if (Math.random() < percentage) {
+      packet.status = "DROPPED";
+      addLog(
+        `DPI Blocked Malware: ${getPacketDescription(packet)}`,
+        "drop",
+      );
+      state.money += 1;
+      return;
+    }
   }
 
   let action = "DROP";
@@ -664,8 +660,8 @@ function renderAclHeaders() {
 // --- Upgrades ---
 const UPGRADE_UNLOCKS = {
   traffic: 1,
-  dpi: 3,
-  threatIntel: 5,
+  dpi: 4,
+  threatIntel: 8,
   repair: 1
 };
 
@@ -733,6 +729,9 @@ function upgradeThreatIntel() {
 function repairSystem() {
   if (state.money >= state.repairCost && state.integrity < 100) {
     state.money -= state.repairCost;
+    state.repairCost = Math.floor(state.repairCost * 1.5);
+    document.getElementById("btnRepair").innerText =
+      `Repair System ($${state.repairCost})`;
     state.integrity = 100;
     addLog(`System integrity restored.`, "allow");
     updateUI();
