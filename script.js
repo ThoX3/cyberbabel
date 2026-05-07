@@ -620,6 +620,30 @@ function renderAclHeaders() {
 }
 
 // --- Upgrades ---
+const UPGRADE_UNLOCKS = {
+  traffic: 1,
+  dpi: 3,
+  threatIntel: 5,
+  repair: 1
+};
+
+function isUpgradeUnlocked(type) {
+  return state.trafficLevel >= UPGRADE_UNLOCKS[type];
+}
+
+function updateUpgradeVisibility() {
+  document.getElementById("upgradeTraffic").style.display =
+    isUpgradeUnlocked("traffic") ? "flex" : "none";
+
+  document.getElementById("upgradeDPI").style.display =
+    isUpgradeUnlocked("dpi") ? "flex" : "none";
+
+  document.getElementById("upgradeIntel").style.display =
+    isUpgradeUnlocked("threatIntel") ? "flex" : "none";
+
+  document.getElementById("upgradeRepair").style.display =
+    isUpgradeUnlocked("repair") ? "flex" : "none";
+}
 
 function upgradeTraffic() {
   if (state.money >= state.trafficCost) {
@@ -694,6 +718,7 @@ function updateUI() {
   }
 
   updateAclVisibility();
+  updateUpgradeVisibility();
 }
 
 // --- Core Loop ---
