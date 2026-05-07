@@ -66,6 +66,35 @@ function toggleMusic() {
   }
 }
 
+const FEATURE_UNLOCKS = {
+  shape: 1,
+  color: 2,
+  size: 3,
+  rotation: 5,
+  origin: 6,
+};
+
+function isFeatureUnlocked(feature) {
+  return state.trafficLevel >= FEATURE_UNLOCKS[feature];
+}
+
+function updateAclVisibility() {
+  document.getElementById("aclOrigin").style.display =
+    isFeatureUnlocked("origin") ? "" : "none";
+
+  document.getElementById("aclColor").style.display =
+    isFeatureUnlocked("color") ? "" : "none";
+
+  document.getElementById("aclSize").style.display =
+    isFeatureUnlocked("size") ? "" : "none";
+
+  document.getElementById("aclRotation").style.display =
+    isFeatureUnlocked("rotation") ? "" : "none";
+
+  document.getElementById("aclShape").style.display =
+    isFeatureUnlocked("shape") ? "" : "none";
+}
+
 // Game State
 let state = {
   integrity: 100,
@@ -106,7 +135,9 @@ const coreRadius = 40;
 
 class Packet {
   constructor() {
-    this.origin = ORIGINS[Math.floor(Math.random() * ORIGINS.length)];
+    this.origin = isFeatureUnlocked("origin")
+      ? ORIGINS[Math.floor(Math.random() * ORIGINS.length)]
+      : null;
     let angleBase = 0;
     if (this.origin === "East") angleBase = 0;
     if (this.origin === "South") angleBase = Math.PI / 2;
@@ -119,11 +150,21 @@ class Packet {
     this.x = centerX + Math.cos(this.angle) * spawnRadius;
     this.y = centerY + Math.sin(this.angle) * spawnRadius;
 
-    this.shape = SHAPES[Math.floor(Math.random() * SHAPES.length)];
-    this.color = COLORS[Math.floor(Math.random() * COLORS.length)];
-    this.sizeType = SIZES[Math.floor(Math.random() * SIZES.length)];
-    this.rotation = ROTATIONS[Math.floor(Math.random() * ROTATIONS.length)];
-    this.size = SIZE_MAP[this.sizeType];
+    this.shape = isFeatureUnlocked("shape")
+      ? SHAPES[Math.floor(Math.random() * SHAPES.length)]
+      : null;
+    this.color = isFeatureUnlocked("color")
+      ? COLORS[Math.floor(Math.random() * COLORS.length)]
+      : null;
+    this.sizeType = isFeatureUnlocked("size")
+      ? SIZES[Math.floor(Math.random() * SIZES.length)]
+      : null;
+    this.rotation = isFeatureUnlocked("rotation")
+      ? ROTATIONS[Math.floor(Math.random() * ROTATIONS.length)]
+      : null;
+    this.size = this.sizeType
+      ? SIZE_MAP[this.sizeType]
+      : 14;
 
     this.isMalware = Math.random() < 0.15; // 15% flat probability
     this.isKnownThreat = this.isMalware && Math.random() < 0.7; // 70% of malware has known patterns
@@ -140,9 +181,13 @@ class Packet {
 
     ctx.save();
     ctx.translate(this.x, this.y);
-    ctx.rotate((parseInt(this.rotation) * Math.PI) / 180);
+    if (this.rotation !== null) {
+      ctx.rotate((parseInt(this.rotation) * Math.PI) / 180);
+    }
 
-    ctx.fillStyle = COLOR_MAP[this.color];
+    ctx.fillStyle = this.color
+      ? COLOR_MAP[this.color]
+      : "#c0bfbf";
     ctx.strokeStyle = this.isMalware && state.dpiActive ? "#fff" : "#000";
     if (this.status === "ALLOWED") ctx.strokeStyle = "#fff";
 
@@ -151,7 +196,7 @@ class Packet {
 
     const r = this.size / 2;
 
-    if (this.shape === "Square") {
+    if (this.shape === null || this.shape === "Square"){
       ctx.rect(-r, -r, this.size, this.size);
     } else if (this.shape === "Circle") {
       ctx.arc(0, 0, r, 0, Math.PI * 2);
@@ -165,12 +210,14 @@ class Packet {
     ctx.fill();
     ctx.stroke();
 
+  if (this.rotation !== null) {
     ctx.beginPath();
     ctx.moveTo(0, 0);
     ctx.lineTo(0, -r);
     ctx.strokeStyle = "#000";
     ctx.lineWidth = 1;
     ctx.stroke();
+  }
 
     ctx.restore();
   }
@@ -248,11 +295,11 @@ function evaluatePacket(packet) {
 
   let action = "DROP";
   for (let rule of rules) {
-    let oMatch = rule.origin === "*" || rule.origin === packet.origin;
-    let sMatch = rule.shape === "*" || rule.shape === packet.shape;
-    let cMatch = rule.color === "*" || rule.color === packet.color;
-    let szMatch = rule.size === "*" || rule.size === packet.sizeType;
-    let rMatch = rule.rot === "*" || rule.rot === packet.rotation;
+    let oMatch =  !isFeatureUnlocked("origin") ||rule.origin === "*" || rule.origin === packet.origin;
+    let sMatch = !isFeatureUnlocked("shape") || rule.shape === "*" || rule.shape === packet.shape;
+    let cMatch = !isFeatureUnlocked("color") || rule.color === "*" || rule.color === packet.color;
+    let szMatch = !isFeatureUnlocked("size") || rule.size === "*" || rule.size === packet.sizeType;
+    let rMatch = !isFeatureUnlocked("rotation") || rule.rot === "*" || rule.rot === packet.rotation;
 
     if (oMatch && sMatch && cMatch && szMatch && rMatch) {
       action = rule.action;
@@ -261,7 +308,7 @@ function evaluatePacket(packet) {
   }
 
   packet.status = action === "ALLOW" ? "ALLOWED" : "DROPPED";
-  const desc = `${packet.sizeType} ${packet.color} ${packet.shape} from ${packet.origin}`;
+  const desc = getPacketDescription(packet);
 
   if (action === "ALLOW") {
     addLog(`Allowed ${desc}`, "allow");
@@ -270,13 +317,39 @@ function evaluatePacket(packet) {
   }
 }
 
+function getPacketDescription(packet) {
+  let parts = [];
+
+  if (isFeatureUnlocked("size")) {
+    parts.push(packet.sizeType);
+  }
+
+  if (isFeatureUnlocked("color")) {
+    parts.push(packet.color);
+  }
+
+  if (isFeatureUnlocked("shape")) {
+    parts.push(packet.shape);
+  }
+
+  if (isFeatureUnlocked("origin")) {
+    parts.push(`from ${packet.origin}`);
+  }
+
+  if (isFeatureUnlocked("rotation")) {
+    parts.push(`rot ${packet.rotation}°`);
+  }
+
+  return parts.join(" ");
+}
+
 function handleEndpoint(packet) {
   if (packet.status === "ALLOWED") {
     if (packet.isMalware) {
       state.integrity -= 10;
       state.shakeFrames = 15;
       addLog(
-        `CRITICAL: Malware breach! (${packet.sizeType} ${packet.color} ${packet.shape})`,
+        `CRITICAL: Malware breach! (${getPacketDescription(packet)})`,
         "alert",
       );
     } else {
@@ -299,8 +372,39 @@ function addAclRule() {
   const size = document.getElementById("aclSize").value;
   const rot = document.getElementById("aclRotation").value;
 
-  rules.push({ action, origin, shape, color, size, rot });
+  rules.push({
+    action,
+    origin: isFeatureUnlocked("origin") ? origin : null,
+    shape: isFeatureUnlocked("shape") ? shape : null,
+    color: isFeatureUnlocked("color") ? color : null,
+    size: isFeatureUnlocked("size") ? size : null,
+    rot: isFeatureUnlocked("rotation") ? rot : null,
+  });
   renderAcl();
+}
+
+function syncRulesWithUnlocks() {
+  for (let rule of rules) {
+    if (isFeatureUnlocked("origin") && rule.origin == null) {
+      rule.origin = "*";
+    }
+
+    if (isFeatureUnlocked("shape") && rule.shape == null) {
+      rule.shape = "*";
+    }
+
+    if (isFeatureUnlocked("color") && rule.color == null) {
+      rule.color = "*";
+    }
+
+    if (isFeatureUnlocked("size") && rule.size == null) {
+      rule.size = "*";
+    }
+
+    if (isFeatureUnlocked("rotation") && rule.rot == null) {
+      rule.rot = "*";
+    }
+  }
 }
 
 function removeAclRule(index) {
@@ -310,21 +414,56 @@ function removeAclRule(index) {
 
 function renderAcl() {
   const tbody = document.getElementById("aclList");
+
   tbody.innerHTML = rules
-    .map(
-      (r, i) => `
-        <tr>
-            <td style="color: ${r.action === "ALLOW" ? "#0f0" : "#f33"}">${r.action}</td>
-            <td>${r.origin.substring(0, 3)}</td>
-            <td>${r.shape.substring(0, 3)}</td>
-            <td>${r.color.substring(0, 3)}</td>
-            <td>${r.size.substring(0, 3)}</td>
-            <td>${r.rot === "*" ? "*" : r.rot + "°"}</td>
-            <td><button onclick="removeAclRule(${i})">X</button></td>
-        </tr>
-    `,
-    )
+    .map((r, i) => `
+      <tr>
+        <td style="color: ${r.action === "ALLOW" ? "#0f0" : "#f33"}">
+          ${r.action}
+        </td>
+
+        ${isFeatureUnlocked("origin")
+          ? `<td>${r.origin.substring(0, 3)}</td>`
+          : ""}
+
+        ${isFeatureUnlocked("shape")
+          ? `<td>${r.shape.substring(0, 3)}</td>`
+          : ""}
+
+        ${isFeatureUnlocked("color")
+          ? `<td>${r.color.substring(0, 3)}</td>`
+          : ""}
+
+        ${isFeatureUnlocked("size")
+          ? `<td>${r.size.substring(0, 3)}</td>`
+          : ""}
+
+        ${isFeatureUnlocked("rotation")
+          ? `<td>${r.rot === "*" ? "*" : r.rot + "°"}</td>`
+          : ""}
+
+        <td>
+          <button onclick="removeAclRule(${i})">X</button>
+        </td>
+      </tr>
+    `)
     .join("");
+}
+
+function renderAclHeaders() {
+  const header = document.getElementById("aclHeader");
+
+  header.innerHTML = `
+    <th>Act</th>
+
+    ${isFeatureUnlocked("origin") ? "<th>Ori</th>" : ""}
+    ${isFeatureUnlocked("shape") ? "<th>Shp</th>" : ""}
+    ${isFeatureUnlocked("color") ? "<th>Col</th>" : ""}
+    ${isFeatureUnlocked("size") ? "<th>Siz</th>" : ""}
+    ${isFeatureUnlocked("rotation") ? "<th>Rot</th>" : ""}
+
+    <th></th>
+  `;
 }
 
 // --- Upgrades ---
@@ -338,6 +477,9 @@ function upgradeTraffic() {
     document.getElementById("btnUpgradeTraffic").innerText =
       `Buy ($${state.trafficCost})`;
     addLog(`Bandwidth upgraded. Traffic Level: ${state.trafficLevel}`, "allow");
+    syncRulesWithUnlocks();
+    renderAclHeaders();
+    renderAcl();
     updateUI();
   }
 }
@@ -396,6 +538,8 @@ function updateUI() {
   if (state.integrity <= 0) {
     state.gameOver = true;
   }
+
+  updateAclVisibility();
 }
 
 // --- Core Loop ---
@@ -419,26 +563,28 @@ function drawScenery() {
     ctx.stroke();
   }
 
-  // Quadrant Diagonals
-  ctx.beginPath();
-  ctx.moveTo(0, 0);
-  ctx.lineTo(canvas.width, canvas.height);
-  ctx.moveTo(canvas.width, 0);
-  ctx.lineTo(0, canvas.height);
-  ctx.strokeStyle = "#333";
-  ctx.lineWidth = 2;
-  ctx.setLineDash([10, 10]);
-  ctx.stroke();
-  ctx.setLineDash([]);
+  if (isFeatureUnlocked("origin")) {
+    // Quadrant Diagonals
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.lineTo(canvas.width, canvas.height);
+    ctx.moveTo(canvas.width, 0);
+    ctx.lineTo(0, canvas.height);
+    ctx.strokeStyle = "#333";
+    ctx.lineWidth = 2;
+    ctx.setLineDash([10, 10]);
+    ctx.stroke();
+    ctx.setLineDash([]);
 
-  // Quadrant Labels
-  ctx.fillStyle = "#333";
-  ctx.font = "20px Courier New";
-  ctx.textAlign = "center";
-  ctx.fillText("NORTH", centerX, 30);
-  ctx.fillText("SOUTH", centerX, canvas.height - 20);
-  ctx.fillText("WEST", 40, centerY);
-  ctx.fillText("EAST", canvas.width - 40, centerY);
+    // Quadrant Labels
+    ctx.fillStyle = "#333";
+    ctx.font = "20px Courier New";
+    ctx.textAlign = "center";
+    ctx.fillText("NORTH", centerX, 30);
+    ctx.fillText("SOUTH", centerX, canvas.height - 20);
+    ctx.fillText("WEST", 40, centerY);
+    ctx.fillText("EAST", canvas.width - 40, centerY);
+  }
 
   // Draw Core
   ctx.beginPath();
@@ -559,4 +705,5 @@ function gameLoop() {
 // Initialize
 addLog("Firewall initialized. Default policy: DROP ALL.");
 renderAcl();
+renderAclHeaders();
 gameLoop();
