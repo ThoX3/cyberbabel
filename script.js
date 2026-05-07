@@ -192,6 +192,37 @@ function updateAclVisibility() {
     isFeatureUnlocked("shape") ? "" : "none";
 }
 
+// Malware
+let malwarePatterns = {
+  shape: null,
+  color: null,
+  size: null,
+  origin: null,
+  rotation: null
+};
+
+function updateMalwarePatterns() {
+  if (isFeatureUnlocked("shape") && !malwarePatterns.shape) {
+    malwarePatterns.shape = SHAPES[Math.floor(Math.random() * SHAPES.length)];
+  }
+
+  if (isFeatureUnlocked("color") && !malwarePatterns.color) {
+    malwarePatterns.color = COLORS[Math.floor(Math.random() * COLORS.length)];
+  }
+
+  if (isFeatureUnlocked("size") && !malwarePatterns.size) {
+    malwarePatterns.size = SIZES[Math.floor(Math.random() * SIZES.length)];
+  }
+
+  if (isFeatureUnlocked("origin") && !malwarePatterns.origin) {
+    malwarePatterns.origin = ORIGINS[Math.floor(Math.random() * ORIGINS.length)];
+  }
+
+  if (isFeatureUnlocked("rotation") && !malwarePatterns.rotation) {
+    malwarePatterns.rotation = ROTATIONS[Math.floor(Math.random() * ROTATIONS.length)];
+  }
+}
+
 // Game State
 let state = {
   integrity: 100,
@@ -263,7 +294,7 @@ class Packet {
       ? SIZE_MAP[this.sizeType]
       : 14;
 
-    this.isMalware = Math.random() < 0.15; // 15% flat probability
+    this.isMalware = this.generateMalware();
     this.isKnownThreat = this.isMalware && Math.random() < 0.7; // 70% of malware has known patterns
     this.reward =
       this.sizeType === "Large" ? 15 : this.sizeType === "Medium" ? 10 : 5;
@@ -271,6 +302,31 @@ class Packet {
     this.evaluated = false;
     this.status = "IN_TRANSIT"; // IN_TRANSIT, ALLOWED, DROPPED
     this.speed = state.packetSpeed * (0.8 + Math.random() * 0.4);
+  }
+
+ generateMalware() {
+    let match = true;
+
+    if (isFeatureUnlocked("shape")) {
+      match = match && this.shape === malwarePatterns.shape;
+    }
+
+    if (isFeatureUnlocked("color")) {
+      match = match && this.color === malwarePatterns.color;
+    }
+
+    if (isFeatureUnlocked("size")) {
+      match = match && this.sizeType === malwarePatterns.size;
+    }
+
+    if (isFeatureUnlocked("origin")) {
+      match = match && this.origin === malwarePatterns.origin;
+    }
+
+    if (isFeatureUnlocked("rotation")) {
+      match = match && this.rotation === malwarePatterns.rotation;
+    }
+    return match;
   }
 
   draw() {
@@ -575,6 +631,7 @@ function upgradeTraffic() {
       `Buy ($${state.trafficCost})`;
     addLog(`Bandwidth upgraded. Traffic Level: ${state.trafficLevel}`, "allow");
     syncRulesWithUnlocks();
+    updateMalwarePatterns();
     renderAclHeaders();
     renderAcl();
     updateUI();
@@ -802,6 +859,7 @@ function gameLoop() {
 // Initialize
 updateTutorial();
 addLog("Firewall initialized. Default policy: DROP ALL.");
+updateMalwarePatterns();
 renderAcl();
 renderAclHeaders();
 gameLoop();
