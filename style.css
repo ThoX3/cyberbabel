@@ -221,3 +221,15 @@ select {
     background: var(--text);
     color: var(--bg);
 }
+
+.tooltip {
+    position: absolute;
+    background: #111;
+    color: #0f0;
+    border: 1px solid #3f3;
+    padding: 6px 8px;
+    font-size: 0.75rem;
+    pointer-events: none;
+    z-index: 9999;
+    max-width: 220px;
+}

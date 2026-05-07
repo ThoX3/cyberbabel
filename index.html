@@ -32,19 +32,19 @@
         <div class="dashboard">
             <div class="panel">
                 <h2>System Status</h2>
-                <div class="stat-row">
+                <div class="stat-row" data-tip="La vie du Firewall">
                     <span>Integrity:</span> <span id="valIntegrity">100%</span>
                 </div>
-                <div class="stat-row">
+                <div class="stat-row" data-tip="Les revenus générés">
                     <span>Data/Revenue:</span> <span id="valMoney">0$</span>
                 </div>
-                <div class="stat-row">
+                <div class="stat-row" data-tip="Le temps écoulé depuis le démarrage du serveur">
                     <span>Uptime:</span> <span id="valUptime">0m0s</span>
                 </div>
-                <div class="stat-row">
+                <div class="stat-row" data-tip="Le niveau du Firewall">
                     <span>Traffic Load:</span> <span id="valTraffic">Low</span>
                 </div>
-                <div class="stat-row" style="margin-top: auto">
+                <div class="stat-row" style="margin-top: auto" data-tip="Active le son">
                     <span>Audio Matrix:</span>
                     <button id="btnMusic" onclick="toggleMusic()">OFF</button>
                 </div>
@@ -52,25 +52,25 @@
 
             <div class="panel">
                 <h2>Upgrades</h2>
-                <div class="stat-row">
+                <div class="stat-row" data-tip="Accélère la fréquence d'apparition des paquets à l'écran">
                     <span>Bandwidth</span>
                     <button id="btnUpgradeTraffic" onclick="upgradeTraffic()">
                         Buy ($50)
                     </button>
                 </div>
-                <div class="stat-row">
+                <div class="stat-row" data-tip="Améliore la capacité d'analyse des paquets">
                     <span>DPI Module</span>
                     <button id="btnUpgradeDPI" onclick="upgradeDPI()">
                         Buy ($300)
                     </button>
                 </div>
-                <div class="stat-row">
+                <div class="stat-row" data-tip="Améliore la base de données d'analyse des modèles">
                     <span>Pattern Analysis DB</span>
                     <button id="btnUpgradeIntel" onclick="upgradeThreatIntel()">
                         Buy ($500)
                     </button>
                 </div>
-                <div class="stat-row" style="margin-top: auto">
+                <div class="stat-row" style="margin-top: auto" data-tip="Répare le Firewall">
                     <span>Repair System</span>
                     <button id="btnRepair" onclick="repairSystem()">
                         Repair ($100)
@@ -82,11 +82,11 @@
                 <h2>Access Control (ACL)</h2>
                 <div class="acl-controls">
                     <div class="acl-controls-row">
-                        <select id="aclAction" title="Action">
+                        <select id="aclAction" title="Action" data-tip="L'action à appliquer">
                             <option value="ALLOW">ALLOW</option>
                             <option value="DROP">DROP</option>
                         </select>
-                        <select id="aclOrigin" title="Origin">
+                        <select id="aclOrigin" title="Origin" data-tip="L'origine des paquets">
                             <option value="*">Any Origin</option>
                             <option value="North">North</option>
                             <option value="South">South</option>
@@ -95,13 +95,13 @@
                         </select>
                     </div>
                     <div class="acl-controls-row">
-                        <select id="aclShape" title="Shape">
+                        <select id="aclShape" title="Shape" data-tip="La forme des paquets">
                             <option value="*">Any Shape</option>
                             <option value="Square">Square</option>
                             <option value="Circle">Circle</option>
                             <option value="Triangle">Triangle</option>
                         </select>
-                        <select id="aclColor" title="Color">
+                        <select id="aclColor" title="Color" data-tip="La couleur des paquets">
                             <option value="*">Any Color</option>
                             <option value="Red">Red</option>
                             <option value="Green">Green</option>
@@ -109,13 +109,13 @@
                         </select>
                     </div>
                     <div class="acl-controls-row">
-                        <select id="aclSize" title="Size">
+                        <select id="aclSize" title="Size" data-tip="La taille des paquets">
                             <option value="*">Any Size</option>
                             <option value="Small">Small</option>
                             <option value="Medium">Medium</option>
                             <option value="Large">Large</option>
                         </select>
-                        <select id="aclRotation" title="Rotation">
+                        <select id="aclRotation" title="Rotation" data-tip="La rotation des paquets">
                             <option value="*">Any Rot</option>
                             <option value="0">0°</option>
                             <option value="90">90°</option>
@@ -165,7 +165,7 @@
                 <div class="log-container" id="sysLog"></div>
             </div>
         </div>
-
+        <div id="tooltip" class="tooltip" style="display:none;"></div>
         <script src="script.js"></script>
     </body>
 </html>

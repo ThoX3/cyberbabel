@@ -1,6 +1,29 @@
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
+// Tooltip
+const tooltip = document.getElementById("tooltip");
+
+document.addEventListener("mouseover", (e) => {
+  const el = e.target.closest("[data-tip]");
+  if (!el) return;
+
+  tooltip.style.display = "block";
+  tooltip.innerHTML = el.getAttribute("data-tip");
+});
+
+document.addEventListener("mousemove", (e) => {
+  tooltip.style.left = e.pageX + 10 + "px";
+  tooltip.style.top = e.pageY + 10 + "px";
+});
+
+document.addEventListener("mouseout", (e) => {
+  const el = e.target.closest("[data-tip]");
+  if (!el) return;
+
+  tooltip.style.display = "none";
+});
+
 // Tutorial Logic
 let tutorialStep = 0;
 let tutorialOpen = true;
