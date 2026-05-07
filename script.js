@@ -1,6 +1,80 @@
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
+// Tutorial Logic
+let tutorialStep = 0;
+let tutorialOpen = true;
+
+const tutorialMessages = [
+  "Des paquets de données (représentés différemment) arrivent de partout et se dirigent vers le centre de l'écran, notre coeur…",
+  "À mi-chemin, ils traversent la ligne en pointillés appelée FIREWALL. C'est à ce moment précis que votre système décide de leur sort.",
+  "Par défaut, la politique est \"DROP ALL\" : Absolument tous les paquets sont détruits à la frontière. Votre système est 100% sécurisé, mais vous ne gagnez aucun revenu.",
+  "<b>Les règles ACL (Access Control List)</b><br>C'est votre arme principale. Vous devez utiliser le panneau ACL pour créer des règles ALLOW (autoriser) qui filtreront le trafic par leurs caractéristiques.",
+  "<b>Le piège</b><br>Environ 15% des paquets générés sont des malwares déguisés. Si une de vos règles ALLOW est trop permissive et laisse passer un malware jusqu'au CORE, votre système subit des dégâts plus ou moins majeurs. A l'inverse, si elle est trop stricte, vous risquez de gagnez moins d'argent...",
+  
+  "Ce panneau est votre tableau de bord vital. Il affiche l'état de santé et de rentabilité de votre serveur en temps réel.",
+  "<b>Integrity (Intégrité)</b><br>Représente la 'vie' de votre système. Elle commence à 100%. Chaque malware qui réussit à toucher le CORE fait chuter cette valeur aléatoirement (10-30%). À 0%, le système est compromis (Game Over).",
+  "<b>Data/Revenue</b><br>Votre budget. Chaque paquet sain qui atteint le CORE vous rapporte de l'argent. Ce budget vous permet d'acheter des UPGRADES (améliorations).",
+  "<b>Uptime</b><br>Le temps écoulé (en secondes) depuis le démarrage du serveur. C'est votre score de survie !",
+  "<b>Traffic Load</b><br>Indique le niveau actuel d'apparition des paquets sur le réseau.",
+
+  "Gérer un pare-feu est un processus itératif. Vous ne pouvez pas deviner le trafic à l'avance; vous devez l'observer et vous adapter grâce au Traffic Log (Journal de trafic).",
+  "<b>Voici la boucle de travail idéale pour vous</b><br> Observer (Drop) : Au début, regardez votre Traffic Log. Vous verrez des lignes indiquant Dropped [Taille] [Couleur] [Forme]. Cela vous montre le trafic qui essaie d'entrer.",
+  "<b>Autoriser (Allow)</b><br>Identifiez un motif récurrent (par exemple, beaucoup de paquets bleus viennent du Nord). L'argent va commencer à rentrer !",
+  "<b>Surveiller les alertes (Alert)</b><br>Gardez un œil sur le log. Si vous voyez un message orange/rouge CRITICAL: Malware breach!, cela signifie qu'un paquet infecté a utilisé la règle que vous venez de créer. Le log vous donnera ses caractéristiques exactes.",
+  "<b>Ajuster (Drop spécifique)</b><br>Si le malware était un 'Petit Carré Bleu du Nord', retournez dans votre ACL et ajoutez une règle très spécifique pour bloquer (DROP) uniquement cette combinaison, afin de sécuriser la faille tout en gardant le reste du trafic bleu ouvert."
+];
+
+const tutorialSteps = [
+  {
+    id: 0,
+    title: "Mécanique de base + ACL"
+  },
+  {
+    id: 5,
+    title: "System Status"
+  },
+  {
+    id: 10,
+    title: "Le Processus : Analyser les logs"
+  }
+];
+
+function nextTutorialStep() {
+  tutorialStep++;
+  updateTutorial();
+}
+
+function getTutorialTitle() {
+  for (let i = tutorialSteps.length - 1; i >= 0; i--) {
+    if (tutorialStep >= tutorialSteps[i].id) {
+      return tutorialSteps[i].title;
+    }
+  }
+  return "";
+}
+
+function updateTutorial() {
+    if (tutorialStep >= tutorialMessages.length) {
+    document.querySelector(".tutorial-panel").style.display = "none";
+    document.getElementById("tutorialReopenBtn").style.display = "block";
+    return;
+  }
+
+  document.getElementById("tutorialContent").innerHTML =
+    tutorialMessages[tutorialStep];
+
+  document.getElementById("tutorialTitle").innerText = getTutorialTitle();
+  document.getElementById("tutorialReopenBtn").style.display = "none";
+}
+
+function resetTutorial() {
+  tutorialStep = 0;
+
+  document.querySelector(".tutorial-panel").style.display = "flex";
+  updateTutorial();
+}
+
 // Audio Generator (Web Audio API)
 let audioCtx;
 let musicInterval;
@@ -703,6 +777,7 @@ function gameLoop() {
 }
 
 // Initialize
+updateTutorial();
 addLog("Firewall initialized. Default policy: DROP ALL.");
 renderAcl();
 renderAclHeaders();

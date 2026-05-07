@@ -9,8 +9,24 @@
     <body>
         <h1>// Network Perimeter Defense</h1>
 
+        <button id="tutorialReopenBtn" onclick="resetTutorial()">
+            ?
+        </button>
+
         <div class="canvas-wrapper">
             <canvas id="gameCanvas" width="800" height="600"></canvas>
+        </div>
+
+        <div class="tutorial-panel">
+            <h2 id="tutorialTitle">Tutoriel</h2>
+
+            <div id="tutorialContent" class="tutorial-content">
+                Welcome to the firewall interface!
+            </div>
+
+            <button id="tutorialNextBtn" onclick="nextTutorialStep()">
+                OK
+            </button>
         </div>
 
         <div class="dashboard">
