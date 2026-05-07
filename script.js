@@ -570,7 +570,7 @@ function renderAcl() {
 
   tbody.innerHTML = rules
     .map((r, i) => `
-      <tr>
+      <tr draggable="true" data-index="${i}">
         <td style="color: ${r.action === "ALLOW" ? "#0f0" : "#f33"}">
           ${r.action}
         </td>
@@ -601,6 +601,46 @@ function renderAcl() {
       </tr>
     `)
     .join("");
+
+    attachDragHandlers();
+}
+
+let dragStartIndex = null;
+
+function moveRule(from, to) {
+  const moved = rules.splice(from, 1)[0];
+  rules.splice(to, 0, moved);
+
+  renderAcl();
+}
+
+function attachDragHandlers() {
+  const rows = document.querySelectorAll("#aclList tr");
+
+  rows.forEach(row => {
+    row.addEventListener("dragstart", (e) => {
+      dragStartIndex = Number(row.dataset.index);
+      row.style.opacity = "0.5";
+    });
+
+    row.addEventListener("dragend", (e) => {
+      row.style.opacity = "1";
+    });
+
+    row.addEventListener("dragover", (e) => {
+      e.preventDefault();
+    });
+
+    row.addEventListener("drop", (e) => {
+      e.preventDefault();
+
+      const dragEndIndex = Number(row.dataset.index);
+
+      if (dragStartIndex === null || dragEndIndex === dragStartIndex) return;
+
+      moveRule(dragStartIndex, dragEndIndex);
+    });
+  });
 }
 
 function renderAclHeaders() {
