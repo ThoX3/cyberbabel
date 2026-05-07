@@ -239,6 +239,7 @@ let state = {
   repairCost: 100,
   gameOver: false,
   shakeFrames: 0,
+  malwarePercentage: 0.15
 };
 
 let packets = [];
@@ -263,6 +264,8 @@ const coreRadius = 40;
 
 class Packet {
   constructor() {
+    this.isMalware = Math.random() < state.malwarePercentage;
+
     this.origin = isFeatureUnlocked("origin")
       ? ORIGINS[Math.floor(Math.random() * ORIGINS.length)]
       : null;
@@ -294,7 +297,9 @@ class Packet {
       ? SIZE_MAP[this.sizeType]
       : 14;
 
-    this.isMalware = this.generateMalware();
+    if (this.isMalware) {
+      this.applyMalwareSignature();
+    }
     this.isKnownThreat = this.isMalware && Math.random() < 0.7; // 70% of malware has known patterns
     this.reward =
       this.sizeType === "Large" ? 15 : this.sizeType === "Medium" ? 10 : 5;
@@ -304,29 +309,26 @@ class Packet {
     this.speed = state.packetSpeed * (0.8 + Math.random() * 0.4);
   }
 
- generateMalware() {
-    let match = true;
-
+  applyMalwareSignature() {
     if (isFeatureUnlocked("shape")) {
-      match = match && this.shape === malwarePatterns.shape;
+      this.shape = malwarePatterns.shape ?? this.shape;
     }
 
     if (isFeatureUnlocked("color")) {
-      match = match && this.color === malwarePatterns.color;
+      this.color = malwarePatterns.color ?? this.color;
     }
 
     if (isFeatureUnlocked("size")) {
-      match = match && this.sizeType === malwarePatterns.size;
+      this.sizeType = malwarePatterns.size ?? this.sizeType;
     }
 
     if (isFeatureUnlocked("origin")) {
-      match = match && this.origin === malwarePatterns.origin;
+      this.origin = malwarePatterns.origin ?? this.origin;
     }
 
     if (isFeatureUnlocked("rotation")) {
-      match = match && this.rotation === malwarePatterns.rotation;
+      this.rotation = malwarePatterns.rotation ?? this.rotation;
     }
-    return match;
   }
 
   draw() {
@@ -429,7 +431,7 @@ function evaluatePacket(packet) {
   if (state.threatIntelActive && packet.isKnownThreat) {
     packet.status = "DROPPED";
     addLog(
-      `Pattern DB Blocked ${packet.sizeType} ${packet.color} ${packet.shape}`,
+      `Pattern DB Blocked ${getPacketDescription(packet)}`,
       "drop",
     );
     state.money += 2;
@@ -439,7 +441,7 @@ function evaluatePacket(packet) {
   if (state.dpiActive && packet.isMalware) {
     packet.status = "DROPPED";
     addLog(
-      `DPI Blocked Malware: ${packet.sizeType} ${packet.color} ${packet.shape}`,
+      `DPI Blocked Malware: ${getPacketDescription(packet)}`,
       "drop",
     );
     state.money += 1;
@@ -689,7 +691,8 @@ function upgradeTraffic() {
   if (state.money >= state.trafficCost) {
     state.money -= state.trafficCost;
     state.trafficLevel++;
-    state.spawnRate = Math.max(0.01, state.spawnRate - 0.1);
+    state.malwarePercentage = Math.min(0.9, state.malwarePercentage + 0.05);
+    state.spawnRate = Math.max(0.01, state.spawnRate - 0.15);
     state.trafficCost = Math.floor(state.trafficCost * 1.8);
     document.getElementById("btnUpgradeTraffic").innerText =
       `Buy ($${state.trafficCost})`;
