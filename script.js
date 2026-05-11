@@ -504,7 +504,7 @@ function handleEndpoint(packet) {
       state.shakeFrames = 15;
       const logMsg = state.heavyBastionActive 
         ? `Malware mitigated by Bastion! (-${damage}%)` 
-        : `CRITICAL: Malware breach! (-${damage}%)`;
+        : `CRITICAL: Malware breach! (-${damage}%) by (${getPacketDescription(packet)})`;
       addLog(logMsg, "alert");
     } else {
       state.money += packet.reward;
