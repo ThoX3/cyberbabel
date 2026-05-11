@@ -773,6 +773,14 @@ function updateUI() {
   document.getElementById("btnRepair").disabled =
     state.money < state.repairCost || state.integrity >= 100;
 
+  const btnBastion = document.getElementById("btnUpgradeBastion");
+  if (btnBastion) {
+    btnBastion.disabled = state.money < state.heavyBastionCost || state.heavyBastionActive;
+    if (state.heavyBastionActive) {
+      btnBastion.innerText = "DEPLOYED";
+    }
+  }
+
   if (state.integrity <= 0) {
     state.gameOver = true;
   }
@@ -825,6 +833,24 @@ function drawScenery() {
     ctx.fillText("EAST", canvas.width - 40, centerY);
   }
 
+  if (state.heavyBastionActive) {
+    ctx.save();
+    ctx.beginPath();
+    // On dessine un cercle un peu plus large que le core (coreRadius + 15)
+    ctx.arc(centerX, centerY, coreRadius + 15, 0, Math.PI * 2);
+    
+    // Style "Cyber Shield" bleu cyan
+    ctx.strokeStyle = "rgba(0, 255, 255, 0.6)"; 
+    ctx.lineWidth = 3;
+    ctx.setLineDash([4, 4]); // Effet pointillés rotatifs (statique ici)
+    ctx.stroke();
+    
+    // Halo lumineux interne
+    ctx.fillStyle = "rgba(0, 255, 255, 0.1)";
+    ctx.fill();
+    ctx.restore();
+  }
+  
   // Draw Core
   ctx.beginPath();
   ctx.arc(centerX, centerY, coreRadius, 0, Math.PI * 2);
