@@ -241,7 +241,9 @@ let state = {
   repairCost: 100,
   gameOver: false,
   shakeFrames: 0,
-  malwarePercentage: 0.15
+  malwarePercentage: 0.15,
+  heavyBastionActive: false,
+  heavyBastionCost: 750
 };
 
 let packets = [];
@@ -497,12 +499,13 @@ function getPacketDescription(packet) {
 function handleEndpoint(packet) {
   if (packet.status === "ALLOWED") {
     if (packet.isMalware) {
-      state.integrity -= 10;
+      let damage = state.heavyBastionActive ? 5 : 10;
+      state.integrity -= damage;
       state.shakeFrames = 15;
-      addLog(
-        `CRITICAL: Malware breach! (${getPacketDescription(packet)})`,
-        "alert",
-      );
+      const logMsg = state.heavyBastionActive 
+        ? `Malware mitigated by Bastion! (-${damage}%)` 
+        : `CRITICAL: Malware breach! (-${damage}%)`;
+      addLog(logMsg, "alert");
     } else {
       state.money += packet.reward;
     }
@@ -722,6 +725,21 @@ function upgradeThreatIntel() {
       `Pattern Analysis DB Synced. Blocking known malicious signatures.`,
       "allow",
     );
+    updateUI();
+  }
+}
+
+function deployHeavyBastion() {
+  if (state.money >= state.heavyBastionCost && !state.heavyBastionActive) {
+    state.money -= state.heavyBastionCost;
+    state.heavyBastionActive = true;
+    
+    // Mise à jour du bouton
+    const btn = document.getElementById("btnUpgradeBastion");
+    btn.innerText = "DEPLOYED";
+    btn.disabled = true;
+    
+    addLog("HEAVY BASTION deployed. Core integrity damage reduced by 50%.", "allow");
     updateUI();
   }
 }
