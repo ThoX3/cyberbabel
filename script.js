@@ -30,7 +30,7 @@ let tutorialOpen = true;
 
 const tutorialMessages = [
   "Des paquets de données (représentés différemment) arrivent de partout et se dirigent vers le centre de l'écran, notre coeur…",
-  "À mi-chemin, ils traversent la ligne en pointillés appelée FIREWALL. C'est à ce moment précis que votre système décide de leur sort.",
+  "À mi-chemin, ils traversent la ligne en pointillés appelée FIREWALL. C'est à ce moment précis que votre système décide de leur sorheavyBastion: 6t.",
   "Par défaut, la politique est \"DROP ALL\" : Absolument tous les paquets sont détruits à la frontière. Votre système est 100% sécurisé, mais vous ne gagnez aucun revenu.",
   "<b>Les règles ACL (Access Control List)</b><br>C'est votre arme principale. Vous devez utiliser le panneau ACL pour créer des règles ALLOW (autoriser) qui filtreront le trafic par leurs caractéristiques.",
   "<b>Le piège</b><br>Environ 15% des paquets générés sont des malwares déguisés. Si une de vos règles ALLOW est trop permissive et laisse passer un malware jusqu'au CORE, votre système subit des dégâts plus ou moins majeurs. A l'inverse, si elle est trop stricte, vous risquez de gagnez moins d'argent...",
@@ -665,7 +665,8 @@ const UPGRADE_UNLOCKS = {
   traffic: 1,
   dpi: 4,
   threatIntel: 8,
-  repair: 1
+  repair: 1,
+  heavyBastion: 6
 };
 
 function isUpgradeUnlocked(type) {
@@ -684,6 +685,9 @@ function updateUpgradeVisibility() {
 
   document.getElementById("upgradeRepair").style.display =
     isUpgradeUnlocked("repair") ? "flex" : "none";
+
+  document.getElementById("upgradeHeavyBastion").style.display = 
+    isUpgradeUnlocked("heavyBastion") ? "flex" : "none";
 }
 
 function upgradeTraffic() {
