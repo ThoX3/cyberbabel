@@ -301,10 +301,11 @@ class Packet {
       ? SIZE_MAP[this.sizeType]
       : 14;
 
-    if (this.isMalware) {
+    this.isMalware = this.verifyMalware();
+
+    /*if (this.isMalware) {
       this.applyMalwareSignature();
-    }
-    this.isKnownThreat = this.isMalware && Math.random() < 0.7; // 70% of malware has known patterns
+    }*/
     this.reward =
       this.sizeType === "Large" ? 15 : this.sizeType === "Medium" ? 10 : 5;
 
@@ -313,26 +314,110 @@ class Packet {
     this.speed = state.packetSpeed * (0.8 + Math.random() * 0.4);
   }
 
-  applyMalwareSignature() {
+  verifyMalware() {
+    let matches = 0;
+    let total = 0;
+
     if (isFeatureUnlocked("shape")) {
-      this.shape = malwarePatterns.shape ?? this.shape;
+      total++;
+      if (this.shape === malwarePatterns.shape) {
+        matches++;
+      }
     }
 
     if (isFeatureUnlocked("color")) {
-      this.color = malwarePatterns.color ?? this.color;
+      total++;
+      if (this.color === malwarePatterns.color) {
+        matches++;
+      }
     }
 
     if (isFeatureUnlocked("size")) {
-      this.sizeType = malwarePatterns.size ?? this.sizeType;
+      total++;
+      if (this.sizeType === malwarePatterns.size) {
+        matches++;
+      }
     }
 
     if (isFeatureUnlocked("origin")) {
-      this.origin = malwarePatterns.origin ?? this.origin;
+      total++;
+      if (this.origin === malwarePatterns.origin) {
+        matches++;
+      }
     }
 
     if (isFeatureUnlocked("rotation")) {
-      this.rotation = malwarePatterns.rotation ?? this.rotation;
+      total++;
+      if (this.rotation === malwarePatterns.rotation) {
+        matches++;
+      }
     }
+
+    // Require at least 1 match
+    return matches > 0;
+  }
+
+  applyMalwareSignature() {
+    const possibleTraits = [];
+
+    if (isFeatureUnlocked("shape")) {
+      possibleTraits.push("shape");
+    }
+
+    if (isFeatureUnlocked("color")) {
+      possibleTraits.push("color");
+    }
+
+    if (isFeatureUnlocked("size")) {
+      possibleTraits.push("size");
+    }
+
+    if (isFeatureUnlocked("origin")) {
+      possibleTraits.push("origin");
+    }
+
+    if (isFeatureUnlocked("rotation")) {
+      possibleTraits.push("rotation");
+    }
+
+    if (possibleTraits.length === 0) return;
+
+    // Malware must match at least ONE trait
+    const mandatoryTrait =
+      possibleTraits[Math.floor(Math.random() * possibleTraits.length)];
+
+    // Randomly apply traits
+    for (const trait of possibleTraits) {
+
+      // If it's the mandatory trait, it must be applied. For others, 50% chance.
+      const shouldApply =
+        trait === mandatoryTrait || Math.random() < 0.5;
+
+      if (!shouldApply) continue;
+
+      switch (trait) {
+        case "shape":
+          this.shape = malwarePatterns.shape;
+          break;
+
+        case "color":
+          this.color = malwarePatterns.color;
+          break;
+
+        case "size":
+          this.sizeType = malwarePatterns.size;
+          break;
+
+        case "origin":
+          this.origin = malwarePatterns.origin;
+          break;
+
+        case "rotation":
+          this.rotation = malwarePatterns.rotation;
+          break;
+      }
+    }
+    addLog(`Malware Spawned: ${getPacketDescription(this)}`, "alert");
   }
 
   draw() {
