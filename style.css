@@ -185,8 +185,8 @@ select {
 
 .tutorial-panel {
     position: fixed;
-    top: 20px;
-    right: 20px;
+    top: 40px;
+    right: 15px;
 
     width: 400px;
     height: 450px;
@@ -208,14 +208,21 @@ select {
 
 .tutorial-panel-left {
     right:auto;
-    left:20px;
+    left:15px;
 }
 
 .tutorial-panel h2 {
     margin-top: 0;
-    margin-bottom: 12px;
+    margin-bottom: 8px;
     color: #3f3;
     border-bottom: 1px solid #333;
+    padding-bottom: 8px;
+}
+
+.tutorial-panel h3 {
+    margin-top: 0;
+    margin-bottom: 12px;
+    color: rgb(22, 253, 22, 0.986);
     padding-bottom: 8px;
 }
 
@@ -237,7 +244,7 @@ select {
 }
 
 .tutorial-panel b {
-    color: rgba(51, 255, 51, 0.986);
+    color: rgba(22, 253, 22, 0.986);
     font-weight: 700;
 }
 
@@ -261,6 +268,63 @@ select {
 #tutorialReopenBtn:hover {
     background: var(--text);
     color: var(--bg);
+}
+
+.tutorial-reopen-menu {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 30;
+}
+
+.tutorial-dropdown {
+    display: none;
+
+    margin-top: 6px;
+
+    background: #111;
+    border: 1px solid #0f0;
+
+    padding: 6px;
+
+    min-width: 220px;
+}
+
+.tutorial-dropdown.open {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.tutorial-dropdown button {
+    width: 100%;
+    text-align: left;
+}
+
+#tutorialCloseBtn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+
+    width: 26px;
+    height: 26px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid #3f3;
+    background: #000;
+    color: #0f0;
+
+    cursor: pointer;
+    font-weight: bold;
+    line-height: 1;
+}
+
+#tutorialCloseBtn:hover {
+    background: #0f0;
+    color: #000;
 }
 
 .tooltip {

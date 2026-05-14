@@ -9,9 +9,14 @@
     <body>
         <h1>// Network Perimeter Defense</h1>
 
-        <button id="tutorialReopenBtn" onclick="resetTutorial()">
-            ?
-        </button>
+        <div class="tutorial-reopen-menu">
+            <button id="tutorialReopenBtn">
+                ?
+            </button>
+
+            <div id="tutorialDropdown" class="tutorial-dropdown">
+            </div>
+        </div>
 
         <div class="game-layout">
             <div class="side-panels left-panels">
@@ -169,7 +174,11 @@
         </div>
 
         <div class="tutorial-panel">
+            <button id="tutorialCloseBtn" onclick="closeTutorial()">
+                    X
+                </button>
             <h2 id="tutorialTitle">Tutoriel</h2>
+            <h3 id="tutorialSubtitle">Tutoriel</h3>
 
             <div id="tutorialContent" class="tutorial-content left">
                 Welcome to the firewall interface!

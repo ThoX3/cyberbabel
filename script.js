@@ -58,104 +58,153 @@ function highlightElement(selector) {
 let tutorialStep = 0;
 let tutorialOpen = true;
 
+
 const tutorialMessages = [
   {
     title: "Mécanique de base + ACL",
     text: "Des paquets de données (représentés différemment) arrivent de partout et se dirigent vers le centre de l'écran, notre coeur…",
-    highlights: ["#gameCanvas"]
+    highlights: ["#gameCanvas"],
+    subtitle: "Introduction"
   },
 
   {
     title: "Mécanique de base + ACL",
     text: "À mi-chemin, ils traversent la ligne en pointillés appelée FIREWALL. C'est à ce moment précis que votre système décide de leur sort.",
-    highlights: ["firewall"]
+    highlights: ["firewall"],
+    subtitle: "Firewall"
   },
 
   {
     title: "Mécanique de base + ACL",
     text: "Par défaut, la politique est \"DROP ALL\" : Absolument tous les paquets sont détruits à la frontière. Votre système est 100% sécurisé, mais vous ne gagnez aucun revenu.",
-    highlights: []
+    highlights: [],
+    subtitle: "Politique par défaut"
   },
 
   {
     title: "Mécanique de base + ACL",
-    text: "<b>Les règles ACL (Access Control List)</b><br>C'est votre arme principale. Vous devez utiliser le panneau ACL pour créer des règles ALLOW (autoriser) qui filtreront le trafic par leurs caractéristiques.",
-    highlights: ["#aclPanel"]
+    text: "C'est votre arme principale. Vous devez utiliser le panneau ACL pour créer des règles ALLOW (autoriser) qui filtreront le trafic par leurs caractéristiques.",
+    highlights: ["#aclPanel"],
+    subtitle: "Les règles ACL"
   },
 
   {
     title: "Mécanique de base + ACL",
     text: "<b>Le piège</b><br>Environ 15% des paquets générés sont des malwares déguisés. Si une de vos règles ALLOW est trop permissive et laisse passer un malware jusqu'au CORE, votre système subit des dégâts. A l'inverse, si elle est trop stricte, vous risquez de gagnez moins d'argent...",
-    highlights: []
+    highlights: [],
+    subtitle: "Malwares"
   },
 
   {
     title: "System Status",
     text: "Ce panneau est votre tableau de bord vital. Il affiche l'état de santé et de rentabilité de votre serveur en temps réel.",
-    highlights: ["#statusPanel"]
+    highlights: ["#statusPanel"],
+    subtitle: "System Status",
   },
 
   {
     title: "System Status",
-    text: "<b>Integrity (Intégrité)</b><br>Représente la 'vie' de votre système. Elle commence à 100%. Chaque malware qui réussit à toucher le CORE fait perdre de la vie. À 0%, le système est compromis (Game Over).",
-    highlights: ["#valIntegrity"]
+    text: "Représente la 'vie' de votre système. Elle commence à 100%. Chaque malware qui réussit à toucher le CORE fait perdre de la vie. À 0%, le système est compromis (Game Over).",
+    highlights: ["#valIntegrity"],
+    subtitle: "Intégrité"
   },
 
   {
     title: "System Status",
-    text: "<b>Data/Revenue</b><br>Votre budget. Chaque paquet sain qui atteint le CORE vous rapporte de l'argent. Ce budget vous permet d'acheter des UPGRADES (améliorations).",
-    highlights: ["#valMoney", "#upgradePanel"]
+    text: "Votre budget. Chaque paquet sain qui atteint le CORE vous rapporte de l'argent. Ce budget vous permet d'acheter des UPGRADES (améliorations).",
+    highlights: ["#valMoney", "#upgradePanel"],
+    subtitle: "Revenue"
   },
 
   {
     title: "System Status",
-    text: "<b>Uptime</b><br>Le temps écoulé (en secondes) depuis le démarrage du serveur. C'est votre score de survie !",
-    highlights: ["#valUptime"]
+    text: "Le temps écoulé (en secondes) depuis le démarrage du serveur. C'est votre score de survie !",
+    highlights: ["#valUptime"],
+    subtitle: "Uptime"
   },
 
   {
     title: "System Status",
-    text: "<b>Traffic Load</b><br>Indique le niveau actuel d'apparition des paquets sur le réseau.",
-    highlights: ["#valTraffic"]
+    text: "Indique le niveau actuel d'apparition des paquets sur le réseau.",
+    highlights: ["#valTraffic"],
+    subtitle: "Traffic Load"
   },
 
   {
     title: "Le Processus : Analyser les logs",
     text: "Gérer un pare-feu est un processus itératif. Vous ne pouvez pas deviner le trafic à l'avance; vous devez l'observer et vous adapter grâce au Traffic Log (Journal de trafic).",
-    highlights: ["#logPanel"]
+    highlights: ["#logPanel"],
+    subtitle: "Journal de trafic"
   },
 
   {
     title: "Le Processus : Analyser les logs",
-    text: "<b>Voici la boucle de travail idéale pour vous</b><br> Observer (Drop) : Au début, regardez votre Traffic Log. Vous verrez des lignes indiquant Dropped [Forme]. Cela vous montre le trafic qui essaie d'entrer.",
-    highlights: ["#logPanel"]
+    text: "<b>Voici la boucle de travail idéale pour vous :</b><br> Observer (Drop) : Au début, regardez votre Traffic Log. Vous verrez des lignes indiquant Dropped [Forme]. Cela vous montre le trafic qui essaie d'entrer.",
+    highlights: ["#logPanel"],
+    subtitle: "Boucle de travail"
   },
 
   {
     title: "Le Processus : Analyser les logs",
-    text: "<b>Autoriser (Allow)</b><br>Identifiez un motif récurrent (par exemple, beaucoup de paquets carrés arrivent). L'argent va commencer à rentrer !",
-    highlights: ["#aclPanel"]
+    text: "Identifiez un motif récurrent (par exemple, beaucoup de paquets carrés arrivent). L'argent va commencer à rentrer !",
+    highlights: ["#aclPanel"],
+    subtitle: "Autoriser le trafic"
   },
 
   {
     title: "Le Processus : Analyser les logs",
-    text: "<b>Surveiller les alertes (Alert)</b><br>Gardez un œil sur le log. Si vous voyez un message orange CRITICAL: Malware breach!, cela signifie qu'un paquet infecté a utilisé la règle que vous venez de créer. Le log vous donnera ses caractéristiques exactes.",
+    text: "Gardez un œil sur le log. Si vous voyez un message orange CRITICAL: Malware breach!, cela signifie qu'un paquet infecté a utilisé la règle que vous venez de créer. Le log vous donnera ses caractéristiques exactes.",
     highlights: ["#logPanel"],
     onEnter: () => {
       addLog(
         "CRITICAL: Malware breach! Square",
         "alert"
       );
-    }
+    },
+    subtitle: "Surveiller les alertes"
   },
 
   {
     title: "Le Processus : Analyser les logs",
-    text: "<b>Ajuster (Drop spécifique)</b><br>Si le malware était un 'Triangle', retournez dans votre ACL et ajoutez une règle très spécifique pour bloquer (DROP) uniquement cette combinaison, afin de sécuriser la faille tout en gardant le reste du trafic ouvert.",
-    highlights: ["#aclPanel", "#logPanel"]
+    text: "Si le malware était un 'Triangle', retournez dans votre ACL et ajoutez une règle très spécifique pour bloquer (DROP) uniquement cette combinaison, afin de sécuriser la faille tout en gardant le reste du trafic ouvert.",
+    highlights: ["#aclPanel", "#logPanel"],
+    subtitle: "Ajuster les règles"
   }
 ];
 
+document
+  .getElementById("tutorialReopenBtn")
+  .addEventListener("click", () => {
+    document
+      .getElementById("tutorialDropdown")
+      .classList.toggle("open");
+  });
+
+function buildTutorialMenu() {
+  const dropdown = document.getElementById("tutorialDropdown");
+
+  dropdown.innerHTML = tutorialMessages.map(message => `
+    <button onclick="openTutorialAt(${tutorialMessages.indexOf(message)})">
+      ${message.subtitle}
+    </button>
+  `).join("");
+}
+
+function openTutorialAt(stepIndex) {
+  tutorialStep = stepIndex;
+
+  document.querySelector(".tutorial-panel").style.display = "flex";
+
+  updateTutorial();
+
+  document.getElementById("tutorialDropdown")
+    .classList.remove("open");
+}
+
+function closeTutorial() {
+  tutorialStep = tutorialMessages.length;
+  updateTutorial();
+}
 
 function nextTutorialStep() {
   tutorialStep++;
@@ -189,6 +238,7 @@ function updateTutorial() {
   document.getElementById("tutorialContent").innerHTML = tutorial.text;
 
   document.getElementById("tutorialTitle").innerText = tutorial.title;
+  document.getElementById("tutorialSubtitle").innerText = tutorial.subtitle;
   document.getElementById("tutorialReopenBtn").style.display = "none";
 
   clearTutorialHighlights();
@@ -1249,6 +1299,7 @@ function gameLoop() {
 updateTutorial();
 addLog("Firewall initialized. Default policy: DROP ALL.");
 updateMalwarePatterns();
+buildTutorialMenu();
 renderAcl();
 renderAclHeaders();
 gameLoop();
