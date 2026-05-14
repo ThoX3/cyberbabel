@@ -651,6 +651,29 @@ function removeAclRule(index) {
   renderAcl();
 }
 
+const STATUS_ICONS = {
+  ALLOW: "✅",
+  DROP: "⛔"
+}
+
+const SHAPE_ICONS = {
+  Square: "&#9633",
+  Circle: "&#9675",
+  Triangle: "&#9651"
+};
+
+const COLOR_ICONS = {
+  Red: "🟥",
+  Green: "🟩",
+  Blue: "🟦"
+};
+
+const SIZE_ICONS = {
+  Small: "▫️",
+  Medium: "◻️",
+  Large: "⬜"
+};
+
 function renderAcl() {
   const tbody = document.getElementById("aclList");
 
@@ -658,7 +681,7 @@ function renderAcl() {
     .map((r, i) => `
       <tr draggable="true" data-index="${i}">
         <td style="color: ${r.action === "ALLOW" ? "#0f0" : "#f33"}">
-          ${r.action}
+          ${STATUS_ICONS[r.action]}
         </td>
 
         ${isFeatureUnlocked("origin")
@@ -666,15 +689,15 @@ function renderAcl() {
           : ""}
 
         ${isFeatureUnlocked("shape")
-          ? `<td>${r.shape.substring(0, 3)}</td>`
+          ? `<td>${SHAPE_ICONS[r.shape] || r.shape.substring(0, 3)}</td>`
           : ""}
 
         ${isFeatureUnlocked("color")
-          ? `<td>${r.color.substring(0, 3)}</td>`
+          ? `<td>${COLOR_ICONS[r.color] || r.color.substring(0, 3)}</td>`
           : ""}
 
         ${isFeatureUnlocked("size")
-          ? `<td>${r.size.substring(0, 3)}</td>`
+          ? `<td>${SIZE_ICONS[r.size] || r.size.substring(0, 3)}</td>`
           : ""}
 
         ${isFeatureUnlocked("rotation")
