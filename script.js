@@ -518,43 +518,93 @@ function renderLogs() {
 function evaluatePacket(packet) {
   packet.evaluated = true;
 
+  // DPI
   if (state.dpiActive && packet.isMalware) {
-      let percentage = state.dpiPourcentage;
-      if (state.threatIntelActive) percentage = state.threatIntelPourcentage;
-      if (Math.random() < percentage) {
+    let percentage = state.dpiPourcentage;
+
+    if (state.threatIntelActive) {
+      percentage = state.threatIntelPourcentage;
+    }
+
+    if (Math.random() < percentage) {
       packet.status = "DROPPED";
+
       addLog(
         `DPI Blocked Malware: ${getPacketDescription(packet)}`,
         "drop",
       );
+
       state.money += 1;
       return;
     }
   }
 
-  let action = "DROP";
-  for (let rule of rules) {
-    let oMatch =  !isFeatureUnlocked("origin") ||rule.origin === "*" || rule.origin === packet.origin;
-    let sMatch = !isFeatureUnlocked("shape") || rule.shape === "*" || rule.shape === packet.shape;
-    let cMatch = !isFeatureUnlocked("color") || rule.color === "*" || rule.color === packet.color;
-    let szMatch = !isFeatureUnlocked("size") || rule.size === "*" || rule.size === packet.sizeType;
-    let rMatch = !isFeatureUnlocked("rotation") || rule.rot === "*" || rule.rot === packet.rotation;
+  // ACL Evaluation
+  let allowMatched = false;
 
-    if (oMatch && sMatch && cMatch && szMatch && rMatch) {
-      action = rule.action;
-      break;
+  for (let rule of rules) {
+    let oMatch =
+      !isFeatureUnlocked("origin") ||
+      rule.origin === "*" ||
+      rule.origin === packet.origin;
+
+    let sMatch =
+      !isFeatureUnlocked("shape") ||
+      rule.shape === "*" ||
+      rule.shape === packet.shape;
+
+    let cMatch =
+      !isFeatureUnlocked("color") ||
+      rule.color === "*" ||
+      rule.color === packet.color;
+
+    let szMatch =
+      !isFeatureUnlocked("size") ||
+      rule.size === "*" ||
+      rule.size === packet.sizeType;
+
+    let rMatch =
+      !isFeatureUnlocked("rotation") ||
+      rule.rot === "*" ||
+      rule.rot === packet.rotation;
+
+    const matched =
+      oMatch && sMatch && cMatch && szMatch && rMatch;
+
+    if (!matched) continue;
+
+    // DROP always has priority
+    if (rule.action === "DROP") {
+      packet.status = "DROPPED";
+
+      addLog(
+        `Dropped ${getPacketDescription(packet)}`,
+        "drop",
+      );
+
+      return;
+    }
+
+    // Remember ALLOW match
+    if (rule.action === "ALLOW") {
+      allowMatched = true;
     }
   }
 
-  packet.status = action === "ALLOW" ? "ALLOWED" : "DROPPED";
+  // Final decision
+  packet.status = allowMatched
+    ? "ALLOWED"
+    : "DROPPED";
+
   const desc = getPacketDescription(packet);
 
-  if (action === "ALLOW") {
+  if (packet.status === "ALLOWED") {
     addLog(`Allowed ${desc}`, "allow");
   } else {
     addLog(`Dropped ${desc}`, "drop");
   }
 }
+
 
 function getPacketDescription(packet) {
   let parts = [];
