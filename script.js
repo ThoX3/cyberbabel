@@ -243,7 +243,8 @@ let state = {
   shakeFrames: 0,
   malwarePercentage: 0.15,
   heavyBastionActive: false,
-  heavyBastionCost: 750
+  heavyBastionCost: 750,
+  malwareDamage : 5
 };
 
 let packets = [];
@@ -584,7 +585,7 @@ function getPacketDescription(packet) {
 function handleEndpoint(packet) {
   if (packet.status === "ALLOWED") {
     if (packet.isMalware) {
-      let damage = state.heavyBastionActive ? 5 : 10;
+      let damage = state.heavyBastionActive ? state.malwareDamage / 2 : state.malwareDamage;
       state.integrity -= damage;
       state.shakeFrames = 15;
       const logMsg = state.heavyBastionActive 
