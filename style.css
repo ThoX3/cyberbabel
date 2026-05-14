@@ -204,6 +204,11 @@ select {
     font-family: "Courier New", monospace;
 
     z-index: 10;
+}  
+
+.tutorial-panel-left {
+    right:auto;
+    left:20px;
 }
 
 .tutorial-panel h2 {
@@ -220,9 +225,15 @@ select {
     color: #ccc;
 }
 
-#tutorialNextBtn {
+.tutorial-controls {
+    margin-top: auto;
+    display: flex;
+}
+
+.tutorial-controls button {
     margin-top: auto;
     width: 100%;
+    margin: 0 30px;
 }
 
 .tutorial-panel b {
@@ -262,4 +273,41 @@ select {
     pointer-events: none;
     z-index: 9999;
     max-width: 220px;
+}
+
+.tutorial-highlight {
+    position: relative;
+    z-index: 50;
+
+    border: 2px solid #0f0 !important;
+    box-shadow:
+        0 0 8px #0f0,
+        0 0 20px rgba(0, 255, 0, 0.6);
+
+    animation: tutorialPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes tutorialPulse {
+    0% {
+        transform: scale(1);
+        box-shadow:
+            0 0 6px rgba(0, 255, 0, 0.7),
+            0 0 14px rgba(0, 255, 0, 0.35);
+    }
+
+    50% {
+        transform: scale(1.004);
+
+        box-shadow:
+            0 0 10px rgba(0, 255, 0, 0.9),
+            0 0 20px rgba(0, 255, 0, 0.5);
+    }
+
+    100% {
+        transform: scale(1);
+
+        box-shadow:
+            0 0 6px rgba(0, 255, 0, 0.7),
+            0 0 14px rgba(0, 255, 0, 0.35);
+    }
 }

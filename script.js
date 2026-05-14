@@ -24,71 +24,180 @@ document.addEventListener("mouseout", (e) => {
   tooltip.style.display = "none";
 });
 
+// Highlighting for tutorial
+let highlightedCanvasElement = null;
+
+function highlightCanvasElement(name) {
+  console.log(name)
+  highlightedCanvasElement = name;
+}
+
+function clearTutorialHighlights() {
+  document
+    .querySelectorAll(".tutorial-highlight")
+    .forEach(el => {
+      el.classList.remove("tutorial-highlight");
+    });
+    highlightedCanvasElement = null;
+    document.querySelector(".tutorial-panel").classList.remove("tutorial-panel-left");
+}
+
+function highlightElement(selector) {
+  if (selector == '') return;
+  const el = document.querySelector(selector);
+  highlightCanvasElement(selector);
+  if (el) {
+    el.classList.add("tutorial-highlight");
+    if (selector.startsWith("#aclPanel") || selector.startsWith("#logPanel")) {
+      document.querySelector(".tutorial-panel").classList.add("tutorial-panel-left");
+    }
+  }
+}
+
 // Tutorial Logic
 let tutorialStep = 0;
 let tutorialOpen = true;
 
 const tutorialMessages = [
-  "Des paquets de données (représentés différemment) arrivent de partout et se dirigent vers le centre de l'écran, notre coeur…",
-  "À mi-chemin, ils traversent la ligne en pointillés appelée FIREWALL. C'est à ce moment précis que votre système décide de leur sort.",
-  "Par défaut, la politique est \"DROP ALL\" : Absolument tous les paquets sont détruits à la frontière. Votre système est 100% sécurisé, mais vous ne gagnez aucun revenu.",
-  "<b>Les règles ACL (Access Control List)</b><br>C'est votre arme principale. Vous devez utiliser le panneau ACL pour créer des règles ALLOW (autoriser) qui filtreront le trafic par leurs caractéristiques.",
-  "<b>Le piège</b><br>Environ 15% des paquets générés sont des malwares déguisés. Si une de vos règles ALLOW est trop permissive et laisse passer un malware jusqu'au CORE, votre système subit des dégâts plus ou moins majeurs. A l'inverse, si elle est trop stricte, vous risquez de gagnez moins d'argent...",
-  
-  "Ce panneau est votre tableau de bord vital. Il affiche l'état de santé et de rentabilité de votre serveur en temps réel.",
-  "<b>Integrity (Intégrité)</b><br>Représente la 'vie' de votre système. Elle commence à 100%. Chaque malware qui réussit à toucher le CORE fait chuter cette valeur aléatoirement (10-30%). À 0%, le système est compromis (Game Over).",
-  "<b>Data/Revenue</b><br>Votre budget. Chaque paquet sain qui atteint le CORE vous rapporte de l'argent. Ce budget vous permet d'acheter des UPGRADES (améliorations).",
-  "<b>Uptime</b><br>Le temps écoulé (en secondes) depuis le démarrage du serveur. C'est votre score de survie !",
-  "<b>Traffic Load</b><br>Indique le niveau actuel d'apparition des paquets sur le réseau.",
-
-  "Gérer un pare-feu est un processus itératif. Vous ne pouvez pas deviner le trafic à l'avance; vous devez l'observer et vous adapter grâce au Traffic Log (Journal de trafic).",
-  "<b>Voici la boucle de travail idéale pour vous</b><br> Observer (Drop) : Au début, regardez votre Traffic Log. Vous verrez des lignes indiquant Dropped [Taille] [Couleur] [Forme]. Cela vous montre le trafic qui essaie d'entrer.",
-  "<b>Autoriser (Allow)</b><br>Identifiez un motif récurrent (par exemple, beaucoup de paquets bleus viennent du Nord). L'argent va commencer à rentrer !",
-  "<b>Surveiller les alertes (Alert)</b><br>Gardez un œil sur le log. Si vous voyez un message orange/rouge CRITICAL: Malware breach!, cela signifie qu'un paquet infecté a utilisé la règle que vous venez de créer. Le log vous donnera ses caractéristiques exactes.",
-  "<b>Ajuster (Drop spécifique)</b><br>Si le malware était un 'Petit Carré Bleu du Nord', retournez dans votre ACL et ajoutez une règle très spécifique pour bloquer (DROP) uniquement cette combinaison, afin de sécuriser la faille tout en gardant le reste du trafic bleu ouvert."
-];
-
-const tutorialSteps = [
   {
-    id: 0,
-    title: "Mécanique de base + ACL"
+    title: "Mécanique de base + ACL",
+    text: "Des paquets de données (représentés différemment) arrivent de partout et se dirigent vers le centre de l'écran, notre coeur…",
+    highlights: ["#gameCanvas"]
   },
+
   {
-    id: 5,
-    title: "System Status"
+    title: "Mécanique de base + ACL",
+    text: "À mi-chemin, ils traversent la ligne en pointillés appelée FIREWALL. C'est à ce moment précis que votre système décide de leur sort.",
+    highlights: ["firewall"]
   },
+
   {
-    id: 10,
-    title: "Le Processus : Analyser les logs"
+    title: "Mécanique de base + ACL",
+    text: "Par défaut, la politique est \"DROP ALL\" : Absolument tous les paquets sont détruits à la frontière. Votre système est 100% sécurisé, mais vous ne gagnez aucun revenu.",
+    highlights: []
+  },
+
+  {
+    title: "Mécanique de base + ACL",
+    text: "<b>Les règles ACL (Access Control List)</b><br>C'est votre arme principale. Vous devez utiliser le panneau ACL pour créer des règles ALLOW (autoriser) qui filtreront le trafic par leurs caractéristiques.",
+    highlights: ["#aclPanel"]
+  },
+
+  {
+    title: "Mécanique de base + ACL",
+    text: "<b>Le piège</b><br>Environ 15% des paquets générés sont des malwares déguisés. Si une de vos règles ALLOW est trop permissive et laisse passer un malware jusqu'au CORE, votre système subit des dégâts. A l'inverse, si elle est trop stricte, vous risquez de gagnez moins d'argent...",
+    highlights: []
+  },
+
+  {
+    title: "System Status",
+    text: "Ce panneau est votre tableau de bord vital. Il affiche l'état de santé et de rentabilité de votre serveur en temps réel.",
+    highlights: ["#statusPanel"]
+  },
+
+  {
+    title: "System Status",
+    text: "<b>Integrity (Intégrité)</b><br>Représente la 'vie' de votre système. Elle commence à 100%. Chaque malware qui réussit à toucher le CORE fait perdre de la vie. À 0%, le système est compromis (Game Over).",
+    highlights: ["#valIntegrity"]
+  },
+
+  {
+    title: "System Status",
+    text: "<b>Data/Revenue</b><br>Votre budget. Chaque paquet sain qui atteint le CORE vous rapporte de l'argent. Ce budget vous permet d'acheter des UPGRADES (améliorations).",
+    highlights: ["#valMoney", "#upgradePanel"]
+  },
+
+  {
+    title: "System Status",
+    text: "<b>Uptime</b><br>Le temps écoulé (en secondes) depuis le démarrage du serveur. C'est votre score de survie !",
+    highlights: ["#valUptime"]
+  },
+
+  {
+    title: "System Status",
+    text: "<b>Traffic Load</b><br>Indique le niveau actuel d'apparition des paquets sur le réseau.",
+    highlights: ["#valTraffic"]
+  },
+
+  {
+    title: "Le Processus : Analyser les logs",
+    text: "Gérer un pare-feu est un processus itératif. Vous ne pouvez pas deviner le trafic à l'avance; vous devez l'observer et vous adapter grâce au Traffic Log (Journal de trafic).",
+    highlights: ["#logPanel"]
+  },
+
+  {
+    title: "Le Processus : Analyser les logs",
+    text: "<b>Voici la boucle de travail idéale pour vous</b><br> Observer (Drop) : Au début, regardez votre Traffic Log. Vous verrez des lignes indiquant Dropped [Forme]. Cela vous montre le trafic qui essaie d'entrer.",
+    highlights: ["#logPanel"]
+  },
+
+  {
+    title: "Le Processus : Analyser les logs",
+    text: "<b>Autoriser (Allow)</b><br>Identifiez un motif récurrent (par exemple, beaucoup de paquets carrés arrivent). L'argent va commencer à rentrer !",
+    highlights: ["#aclPanel"]
+  },
+
+  {
+    title: "Le Processus : Analyser les logs",
+    text: "<b>Surveiller les alertes (Alert)</b><br>Gardez un œil sur le log. Si vous voyez un message orange CRITICAL: Malware breach!, cela signifie qu'un paquet infecté a utilisé la règle que vous venez de créer. Le log vous donnera ses caractéristiques exactes.",
+    highlights: ["#logPanel"],
+    onEnter: () => {
+      addLog(
+        "CRITICAL: Malware breach! Square",
+        "alert"
+      );
+    }
+  },
+
+  {
+    title: "Le Processus : Analyser les logs",
+    text: "<b>Ajuster (Drop spécifique)</b><br>Si le malware était un 'Triangle', retournez dans votre ACL et ajoutez une règle très spécifique pour bloquer (DROP) uniquement cette combinaison, afin de sécuriser la faille tout en gardant le reste du trafic ouvert.",
+    highlights: ["#aclPanel", "#logPanel"]
   }
 ];
+
 
 function nextTutorialStep() {
   tutorialStep++;
   updateTutorial();
 }
 
-function getTutorialTitle() {
-  for (let i = tutorialSteps.length - 1; i >= 0; i--) {
-    if (tutorialStep >= tutorialSteps[i].id) {
-      return tutorialSteps[i].title;
-    }
+function previousTutorialStep() {
+  tutorialStep--;
+  if (tutorialStep < 0) {
+    tutorialStep = 0;
   }
-  return "";
+  updateTutorial();
 }
 
 function updateTutorial() {
     if (tutorialStep >= tutorialMessages.length) {
     document.querySelector(".tutorial-panel").style.display = "none";
     document.getElementById("tutorialReopenBtn").style.display = "block";
+    clearTutorialHighlights();
     return;
   }
 
-  document.getElementById("tutorialContent").innerHTML =
-    tutorialMessages[tutorialStep];
+  if (tutorialStep <= 0) {
+    document.getElementById("tutorialPreviousBtn").style.display = "none";
+  } else {
+    document.getElementById("tutorialPreviousBtn").style.display = "block";
+  }
 
-  document.getElementById("tutorialTitle").innerText = getTutorialTitle();
+  let tutorial = tutorialMessages[tutorialStep];
+
+  document.getElementById("tutorialContent").innerHTML = tutorial.text;
+
+  document.getElementById("tutorialTitle").innerText = tutorial.title;
   document.getElementById("tutorialReopenBtn").style.display = "none";
+
+  clearTutorialHighlights();
+  for (let highlight of tutorial.highlights) {
+    highlightElement(highlight);
+    if (tutorial.onEnter) {
+      tutorial.onEnter();
+    }
+  }
 }
 
 function resetTutorial() {
@@ -1033,13 +1142,19 @@ function drawScenery() {
   ctx.arc(centerX, centerY, firewallRadius, 0, Math.PI * 2);
   ctx.strokeStyle = "#3f3";
   ctx.setLineDash([5, 5]);
+  if (highlightedCanvasElement === "firewall") {
+    ctx.shadowColor = "#0f0";
+    ctx.shadowBlur = 20;
+  }
   ctx.stroke();
   ctx.setLineDash([]);
+
 
   ctx.fillStyle = "#3f3";
   ctx.fillText("FIREWALL", centerX, centerY - firewallRadius - 10);
 
   ctx.textAlign = "left"; // reset
+  ctx.restore();
 }
 
 function gameLoop() {

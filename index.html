@@ -16,7 +16,7 @@
         <div class="game-layout">
             <div class="side-panels left-panels">
                 <!-- System Status Panel -->
-                <div class="panel">
+                <div class="panel" id="statusPanel">
                     <h2>System Status</h2>
                     <div class="stat-row" data-tip="La vie du Firewall">
                         <span>Integrity:</span> <span id="valIntegrity">100%</span>
@@ -78,7 +78,7 @@
 
             <div class="side-panels right-panels">
                 <!-- ACL Management Panel -->
-                <div class="panel">
+                <div class="panel" id="aclPanel">
                     <h2>Access Control (ACL)</h2>
                     <div class="acl-controls">
                         <div class="acl-controls-row">
@@ -156,7 +156,7 @@
                 </div>
 
                 <!-- Traffic Log Panel -->
-                <div class="panel">
+                <div class="panel" id="logPanel">
                     <h2>Traffic Log</h2>
                     <div class="log-filters">
                         <button onclick="toggleLogType('allow')" id="btnAllow">ALLOW</button>
@@ -171,13 +171,18 @@
         <div class="tutorial-panel">
             <h2 id="tutorialTitle">Tutoriel</h2>
 
-            <div id="tutorialContent" class="tutorial-content">
+            <div id="tutorialContent" class="tutorial-content left">
                 Welcome to the firewall interface!
             </div>
 
-            <button id="tutorialNextBtn" onclick="nextTutorialStep()">
-                OK
-            </button>
+            <div class="tutorial-controls">
+                <button id="tutorialPreviousBtn" onclick="previousTutorialStep()">
+                    Previous
+                </button>
+                <button id="tutorialNextBtn" onclick="nextTutorialStep()">
+                    Next
+                </button>
+            </div>
         </div>
 
 
