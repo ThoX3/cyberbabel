@@ -6,6 +6,15 @@
     --warning: #fa0;
     --panel-bg: #0a0a0a;
 }
+.game-layout {
+    flex: 1;
+    min-height: 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
 body {
     background-color: var(--bg);
     color: var(--text);
@@ -27,20 +36,25 @@ h1 {
     flex-shrink: 0;
 }
 .canvas-wrapper {
-    flex: 1; /* Prend tout l'espace vertical disponible */
-    min-height: 0;
+    flex: 1;
+
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-bottom: 15px;
+
+    min-width: 0;
+    min-height: 0;
 }
 canvas {
     background-color: #000;
     border: 1px solid var(--border);
     box-shadow: 0 0 10px rgba(51, 255, 51, 0.2);
+
+    width: 900px;
+    height: 700px;
+
     max-width: 100%;
     max-height: 100%;
-    object-fit: contain; /* Assure que le canvas s'adapte sans être déformé */
 }
 .dashboard {
     display: grid;
@@ -52,10 +66,26 @@ canvas {
 .panel {
     background: var(--panel-bg);
     border: 1px solid var(--border);
+
     padding: 12px;
+
     display: flex;
     flex-direction: column;
-    overflow-y: auto; /* Scroll interne si nécessaire */
+
+    overflow: hidden;
+}
+
+.left-panels .panel,
+.right-panels .panel {
+    flex: 1;
+}
+.side-panels {
+    width: 400px;
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 }
 .panel h2 {
     font-size: 1.1rem;
