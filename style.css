@@ -280,14 +280,19 @@ select {
 .tutorial-dropdown {
     display: none;
 
-    margin-top: 6px;
+    width: 260px;        /* fixed width */
+    max-height: 430px;   /* fixed height limit */
+
+    overflow-y: auto;    /* vertical scroll */
+    overflow-x: hidden;
 
     background: #111;
     border: 1px solid #0f0;
 
     padding: 6px;
+    box-sizing: border-box;
 
-    min-width: 220px;
+    margin-top: 6px;
 }
 
 .tutorial-dropdown.open {
@@ -299,6 +304,7 @@ select {
 .tutorial-dropdown button {
     width: 100%;
     text-align: left;
+    white-space: nowrap;
 }
 
 #tutorialCloseBtn {
