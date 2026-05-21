@@ -157,7 +157,7 @@ const tutorialMessages = [
     highlights: ["#logPanel"],
     onEnter: () => {
       addLog(
-        "CRITICAL: Malware breach! Square",
+        "CRITICAL: Malware breach! " + SHAPE_ICONS["Triangle"],
         "alert"
       );
     },
@@ -768,24 +768,24 @@ function evaluatePacket(packet) {
 function getPacketDescription(packet) {
   let parts = [];
 
-  if (isFeatureUnlocked("size")) {
-    parts.push(packet.sizeType);
+  if (isFeatureUnlocked("size") && packet.sizeType) {
+    parts.push(SIZE_ICONS[packet.sizeType] || packet.sizeType.substring(0, 3));
   }
 
-  if (isFeatureUnlocked("color")) {
-    parts.push(packet.color);
+  if (isFeatureUnlocked("color") && packet.color) {
+    parts.push(COLOR_ICONS[packet.color] || packet.color.substring(0, 3));
   }
 
-  if (isFeatureUnlocked("shape")) {
-    parts.push(packet.shape);
+  if (isFeatureUnlocked("shape") && packet.shape) {
+    parts.push(SHAPE_ICONS[packet.shape] || packet.shape.substring(0, 3));
   }
 
-  if (isFeatureUnlocked("origin")) {
-    parts.push(`from ${packet.origin}`);
+  if (isFeatureUnlocked("origin") && packet.origin) {
+    parts.push(packet.origin.substring(0, 3));
   }
 
-  if (isFeatureUnlocked("rotation")) {
-    parts.push(`rot ${packet.rotation}°`);
+  if (isFeatureUnlocked("rotation") && packet.rotation) {
+    parts.push(packet.rotation.substring(0, 3) + "°");
   }
 
   return parts.join(" ");
