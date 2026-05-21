@@ -814,12 +814,12 @@ function spawnPacket() {
 // --- UI Controls ---
 
 function addAclRule() {
-  const action = document.getElementById("aclAction").value;
-  const origin = document.getElementById("aclOrigin").value;
-  const shape = document.getElementById("aclShape").value;
-  const color = document.getElementById("aclColor").value;
-  const size = document.getElementById("aclSize").value;
-  const rot = document.getElementById("aclRotation").value;
+  const action = getSelectedRadioValue("aclAction");
+  const origin = getSelectedRadioValue("aclOrigin");
+  const shape = getSelectedRadioValue("aclShape");
+  const color = getSelectedRadioValue("aclColor");
+  const size = getSelectedRadioValue("aclSize");
+  const rot = getSelectedRadioValue("aclRotation");
 
   rules.push({
     action,
@@ -830,6 +830,11 @@ function addAclRule() {
     rot: isFeatureUnlocked("rotation") ? rot : null,
   });
   renderAcl();
+}
+
+function getSelectedRadioValue(name) {
+  const checked = document.querySelector(`input[name="${name}"]:checked`);
+  return checked ? checked.value : "*";
 }
 
 function syncRulesWithUnlocks() {
@@ -894,10 +899,6 @@ function renderAcl() {
           ${STATUS_ICONS[r.action]}
         </td>
 
-        ${isFeatureUnlocked("origin")
-          ? `<td>${r.origin.substring(0, 3)}</td>`
-          : ""}
-
         ${isFeatureUnlocked("shape")
           ? `<td>${SHAPE_ICONS[r.shape] || r.shape.substring(0, 3)}</td>`
           : ""}
@@ -912,6 +913,10 @@ function renderAcl() {
 
         ${isFeatureUnlocked("rotation")
           ? `<td>${r.rot === "*" ? "*" : r.rot + "°"}</td>`
+          : ""}
+          
+          ${isFeatureUnlocked("origin")
+          ? `<td>${r.origin.substring(0, 3)}</td>`
           : ""}
 
         <td>
@@ -968,12 +973,11 @@ function renderAclHeaders() {
   header.innerHTML = `
     <th>Act</th>
 
-    ${isFeatureUnlocked("origin") ? "<th>Ori</th>" : ""}
     ${isFeatureUnlocked("shape") ? "<th>Shp</th>" : ""}
     ${isFeatureUnlocked("color") ? "<th>Col</th>" : ""}
     ${isFeatureUnlocked("size") ? "<th>Siz</th>" : ""}
     ${isFeatureUnlocked("rotation") ? "<th>Rot</th>" : ""}
-
+    ${isFeatureUnlocked("origin") ? "<th>Ori</th>" : ""}
     <th></th>
   `;
 }

@@ -50,7 +50,7 @@ canvas {
     border: 1px solid var(--border);
     box-shadow: 0 0 10px rgba(51, 255, 51, 0.2);
 
-    width: 90%;
+    width: 100%;
     height: 100%;
 
     max-width: 100%;
@@ -80,7 +80,7 @@ canvas {
     flex: 1;
 }
 .side-panels {
-    width: 400px;
+    width: 500px;
     height: 100%;
 
     display: flex;
@@ -129,32 +129,132 @@ select {
     font-family: inherit;
     font-size: 0.8rem;
 }
+/* =========================
+   ACL MAIN LAYOUT
+========================= */
+
+#aclPanel {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+}
+
+/* SPLIT: left builder / right table */
+.acl-split {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    gap: 12px;
+}
+
+/* LEFT SIDE */
+.acl-builder {
+    width: 45%;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    gap: 10px;
+}
+
+/* RIGHT SIDE */
+.acl-table-container {
+    width: 55%;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+
+    overflow-y: auto;
+    border-left: 1px solid #333;
+    padding-left: 10px;
+}
+
+/* RULE CONTROLS STACK */
 .acl-controls {
     display: flex;
     flex-direction: column;
-    gap: 5px;
-    margin-bottom: 10px;
-    flex-shrink: 0;
+    gap: 10px;
+    overflow-y: auto;
 }
-.acl-controls-row {
+
+/* GROUPS */
+.acl-group {
     display: flex;
-    gap: 5px;
+    flex-direction: column;
+    gap: 4px;
+    flex-wrap: nowrap;
+    align-items: flex-start;
 }
-.acl-controls-row select {
-    flex: 1;
-    width: 100%;
+
+/* LABEL WIDTH */
+.acl-label {
+    width: 70px;
+    color: #aaa;
 }
+
+/* RADIO HIDE */
+.acl-group input[type="radio"] {
+    display: none;
+}
+
+.acl-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+/* CHIPS */
+.acl-group label {
+    border: 1px solid #3f3;
+    padding: 4px 8px;
+    cursor: pointer;
+    user-select: none;
+    font-size: 0.85rem;
+}
+
+/* SELECTED STATE */
+.acl-group label:has(input:checked) {
+    background: #0f0;
+    color: #000;
+}
+
+/* TABLE */
 .acl-table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 5px;
     font-size: 0.75rem;
 }
+
 .acl-table th,
 .acl-table td {
     border: 1px solid #333;
-    padding: 3px;
+    padding: 4px;
     text-align: left;
+}
+
+.acl-send-button {
+    margin-top: auto;
+}
+
+/* FOOTER */
+.acl-footer {
+    margin-top: auto;
+    font-size: 0.75rem;
+    color: #aaa;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+/* =========================
+   PANEL ROOT SAFETY
+========================= */
+
+.panel {
+    overflow: hidden;
+}
+
+#aclPanel {
+    overflow: hidden;
 }
 .log-container {
     flex: 1;

@@ -83,82 +83,109 @@
 
             <div class="side-panels right-panels">
                 <!-- ACL Management Panel -->
-                <div class="panel" id="aclPanel">
+                 <div class="panel acl-layout" id="aclPanel">
                     <h2>Access Control (ACL)</h2>
-                    <div class="acl-controls">
-                        <div class="acl-controls-row">
-                            <select id="aclAction" title="Action" data-tip="L'action à appliquer">
-                                <option value="ALLOW">✅</option>
-                                <option value="DROP">⛔</option>
-                            </select>
-                            <select id="aclOrigin" title="Origin" data-tip="L'origine des paquets">
-                                <option value="*">Any Origin</option>
-                                <option value="North">North</option>
-                                <option value="South">South</option>
-                                <option value="East">East</option>
-                                <option value="West">West</option>
-                            </select>
+
+                    <div class="acl-split">
+
+                        <!-- LEFT: rule builder -->
+                        <div class="acl-builder">
+
+                            <div class="acl-controls">
+
+                                <div class="acl-group">
+                                    <span class="acl-label">Action</span>
+                                    <div class="acl-options">
+                                        <label>
+                                            <input type="radio" name="aclAction" value="ALLOW" checked>
+                                            ✅
+                                        </label>
+
+                                        <label>
+                                            <input type="radio" name="aclAction" value="DROP">
+                                            ⛔
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="acl-group" id="aclShape">
+                                    <span class="acl-label">Forme</span>
+                                    <div class="acl-options">
+                                        <label><input type="radio" name="aclShape" value="*" checked>*</label>
+                                        <label><input type="radio" name="aclShape" value="Square">□</label>
+                                        <label><input type="radio" name="aclShape" value="Circle">○</label>
+                                        <label><input type="radio" name="aclShape" value="Triangle">△</label>
+                                    </div>
+                                </div>
+
+                                <div class="acl-group" id="aclColor">
+                                    <span class="acl-label">Couleur</span>
+                                    <div class="acl-options">
+                                        <label><input type="radio" name="aclColor" value="*" checked>*</label>
+                                        <label><input type="radio" name="aclColor" value="Red">🟥</label>
+                                        <label><input type="radio" name="aclColor" value="Green">🟩</label>
+                                        <label><input type="radio" name="aclColor" value="Blue">🟦</label>
+                                    </div>
+                                </div>
+
+                                <div class="acl-group" id="aclSize">
+                                    <span class="acl-label">Taille</span>
+                                    <div class="acl-options">
+                                        <label><input type="radio" name="aclSize" value="*" checked>*</label>
+                                        <label><input type="radio" name="aclSize" value="Small">▫️</label>
+                                        <label><input type="radio" name="aclSize" value="Medium">◻️</label>
+                                        <label><input type="radio" name="aclSize" value="Large">⬜</label>
+                                    </div>
+                                </div>
+
+                                <div class="acl-group" id="aclRotation">
+                                    <span class="acl-label">Rotation</span>
+                                    <div class="acl-options">
+                                        <label><input type="radio" name="aclRotation" value="*" checked>*</label>
+                                        <label><input type="radio" name="aclRotation" value="0">0°</label>
+                                        <label><input type="radio" name="aclRotation" value="90">90°</label>
+                                        <label><input type="radio" name="aclRotation" value="180">180°</label>
+                                        <label><input type="radio" name="aclRotation" value="270">270°</label>
+                                    </div>
+                                </div>
+
+                                <div class="acl-group" id="aclOrigin">
+                                    <span class="acl-label">Origine</span>
+                                    <div class="acl-options">
+                                        <label><input type="radio" name="aclOrigin" value="*" checked>*</label>
+                                        <label><input type="radio" name="aclOrigin" value="North">N</label>
+                                        <label><input type="radio" name="aclOrigin" value="South">S</label>
+                                        <label><input type="radio" name="aclOrigin" value="East">E</label>
+                                        <label><input type="radio" name="aclOrigin" value="West">W</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="acl-send-button" onclick="addAclRule()">Add Rule</button>
                         </div>
-                        <div class="acl-controls-row">
-                            <select id="aclShape" title="Shape" data-tip="La forme des paquets">
-                                <option value="*">Any Shape</option>
-                                <option value="Square">&#9633</option>
-                                <option value="Circle">&#9675</option>
-                                <option value="Triangle">&#9651</option>
-                            </select>
-                            <select id="aclColor" title="Color" data-tip="La couleur des paquets">
-                                <option value="*">Any Color</option>
-                                <option value="Red">🟥</option>
-                                <option value="Green">🟩</option>
-                                <option value="Blue">🟦</option>
-                            </select>
+
+                        <!-- RIGHT: rules table -->
+                        <div class="acl-table-container">
+                            <table class="acl-table">
+                                <thead>
+                                    <tr id="aclHeader">
+                                        <th>Act</th>
+                                        <th>Ori</th>
+                                        <th>Shp</th>
+                                        <th>Col</th>
+                                        <th>Siz</th>
+                                        <th>Rot</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="aclList"></tbody>
+                            </table>
+                            <div class="acl-footer">
+                                Default Policy: DROP ALL
+                            </div>
                         </div>
-                        <div class="acl-controls-row">
-                            <select id="aclSize" title="Size" data-tip="La taille des paquets">
-                                <option value="*">Any Size</option>
-                                <option value="Small">▫️</option>
-                                <option value="Medium">◻️</option>
-                                <option value="Large">⬜</option>
-                            </select>
-                            <select id="aclRotation" title="Rotation" data-tip="La rotation des paquets">
-                                <option value="*">Any Rot</option>
-                                <option value="0">0°</option>
-                                <option value="90">90°</option>
-                                <option value="180">180°</option>
-                                <option value="270">270°</option>
-                            </select>
-                        </div>
-                        <button onclick="addAclRule()">Add Rule</button>
-                    </div>
-                    <div style="overflow-y: auto; flex: 1">
-                        <table class="acl-table">
-                            <thead>
-                                <tr id="aclHeader">
-                                    <th>Act</th>
-                                    <th>Ori</th>
-                                    <th>Shp</th>
-                                    <th>Col</th>
-                                    <th>Siz</th>
-                                    <th>Rot</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody id="aclList">
-                                <!-- Rules injected here -->
-                            </tbody>
-                        </table>
-                    </div>
-                    <div
-                        style="
-                            margin-top: 5px;
-                            font-size: 0.75rem;
-                            color: #aaa;
-                            text-align: center;
-                        "
-                    >
-                        Default Policy: DROP ALL
                     </div>
                 </div>
+
 
                 <!-- Traffic Log Panel -->
                 <div class="panel" id="logPanel">
