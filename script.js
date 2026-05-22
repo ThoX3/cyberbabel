@@ -399,6 +399,9 @@ let state = {
   threatIntelCost: 500,
   repairCost: 100,
   gameOver: false,
+  totalPackets: 0,
+  correctRejectedPackets: 0,
+  incorrectRejectedPackets: 0,
   shakeFrames: 0,
   malwarePercentage: 0.15,
   heavyBastionActive: false,
@@ -692,7 +695,7 @@ function evaluatePacket(packet) {
         `DPI Blocked Malware: ${getPacketDescription(packet)}`,
         "drop",
       );
-
+      state.correctRejectedPackets++;
       state.money += 1;
       return;
     }
@@ -741,6 +744,11 @@ function evaluatePacket(packet) {
         "drop",
       );
 
+      if (packet.isMalware) {
+      state.correctRejectedPackets++;
+      }
+      else state.incorrectRejectedPackets++;
+
       return;
     }
 
@@ -761,6 +769,10 @@ function evaluatePacket(packet) {
     addLog(`Allowed ${desc}`, "allow");
   } else {
     addLog(`Dropped ${desc}`, "drop");
+    if (packet.isMalware) {
+      state.correctRejectedPackets++;
+    }
+    else state.incorrectRejectedPackets++;
   }
 }
 
@@ -809,6 +821,7 @@ function handleEndpoint(packet) {
 
 function spawnPacket() {
   packets.push(new Packet());
+  state.totalPackets++;
 }
 
 // --- UI Controls ---
@@ -1211,25 +1224,87 @@ function drawScenery() {
   ctx.restore();
 }
 
+function gameover() {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.85)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.textAlign = "center";
+
+      ctx.fillStyle = "#f33";
+      ctx.font = "30px Courier New";
+      ctx.fillText(
+          "SYSTEM COMPROMISED",
+          canvas.width / 2,
+          canvas.height / 2 - 80
+      );
+
+      ctx.fillStyle = "#0f0";
+      ctx.font = "18px Courier New";
+
+      ctx.fillText(
+          `Total Packets: ${state.totalPackets}`,
+          canvas.width / 2,
+          canvas.height / 2 - 10
+      );
+
+      ctx.fillText(
+          `Correct Rejected Packets: ${state.correctRejectedPackets}`,
+          canvas.width / 2,
+          canvas.height / 2 + 20
+      );
+
+      ctx.fillText(
+          `Incorrect Rejected Packets: ${state.incorrectRejectedPackets}`,
+          canvas.width / 2,
+          canvas.height / 2 + 50
+      );
+
+      const rejectRate =
+          state.totalPackets > 0
+              ? Math.round(
+                    (state.incorrectRejectedPackets /
+                        state.totalPackets) *
+                        100
+                )
+              : 0;
+
+      ctx.fillText(
+          `False Positive Rate: ${rejectRate}%`,
+          canvas.width / 2,
+          canvas.height / 2 + 80
+      );
+
+      const totalSeconds = Math.floor(state.uptime);
+      const minutes = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
+      const seconds = (totalSeconds % 60).toString().padStart(2, '0');
+
+      ctx.fillText(
+          `Time: ${minutes}m${seconds}s`,
+          canvas.width / 2,
+          canvas.height / 2 + 110
+      );
+
+      ctx.font = "16px Courier New";
+
+      ctx.fillStyle = "#aaa";
+
+      ctx.fillText(
+          "Refresh to reboot.",
+          canvas.width / 2,
+          canvas.height / 2 + 140
+      );
+
+      ctx.textAlign = "left";
+      return;
+}
+
 function gameLoop() {
     if (isPaused) {
     requestAnimationFrame(gameLoop);
     return;
   }
   if (state.gameOver) {
-    ctx.fillStyle = "rgba(0, 0, 0, 0.8)";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "#f33";
-    ctx.font = "30px Courier New";
-    ctx.textAlign = "center";
-    ctx.fillText("SYSTEM COMPROMISED", canvas.width / 2, canvas.height / 2);
-    ctx.font = "16px Courier New";
-    ctx.fillText(
-      "Refresh to reboot.",
-      canvas.width / 2,
-      canvas.height / 2 + 30,
-    );
-    ctx.textAlign = "left";
+    gameover();
     return;
   }
 
