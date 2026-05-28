@@ -58,117 +58,72 @@ function highlightElement(selector) {
 let tutorialStep = 0;
 let tutorialOpen = true;
 
-
 const tutorialMessages = [
   {
-    title: "Mécanique de base + ACL",
-    text: "Des paquets de données (représentés différemment) arrivent de partout et se dirigent vers le centre de l'écran, notre coeur…",
-    highlights: ["#gameCanvas"],
-    subtitle: "Introduction"
+    id: "intro",
+    highlights: ["#gameCanvas"]
   },
-
   {
-    title: "Mécanique de base + ACL",
-    text: "À mi-chemin, ils traversent la ligne en pointillés appelée FIREWALL. C'est à ce moment précis que votre système décide de leur sort.",
-    highlights: ["firewall"],
-    subtitle: "Firewall"
+    id: "firewall",
+    highlights: ["firewall"]
   },
-
   {
-    title: "Mécanique de base + ACL",
-    text: "Par défaut, la politique est \"DROP ALL\" : Absolument tous les paquets sont détruits à la frontière. Votre système est 100% sécurisé, mais vous ne gagnez aucun revenu.",
-    highlights: [],
-    subtitle: "Politique par défaut"
+    id: "default_policy",
+    highlights: []
   },
-
   {
-    title: "Mécanique de base + ACL",
-    text: "C'est votre arme principale. Vous devez utiliser le panneau ACL pour créer des règles ALLOW (autoriser) qui filtreront le trafic par leurs caractéristiques.",
-    highlights: ["#aclPanel"],
-    subtitle: "Les règles ACL"
+    id: "acl",
+    highlights: ["#aclPanel"]
   },
-
   {
-    title: "Mécanique de base + ACL",
-    text: "<b>Le piège</b><br>Environ 15% des paquets générés sont des malwares déguisés. Si une de vos règles ALLOW est trop permissive et laisse passer un malware jusqu'au CORE, votre système subit des dégâts. A l'inverse, si elle est trop stricte, vous risquez de gagnez moins d'argent...",
-    highlights: [],
-    subtitle: "Malwares"
+    id: "malware",
+    highlights: []
   },
-
   {
-    title: "System Status",
-    text: "Ce panneau est votre tableau de bord vital. Il affiche l'état de santé et de rentabilité de votre serveur en temps réel.",
-    highlights: ["#statusPanel"],
-    subtitle: "System Status",
+    id: "status",
+    highlights: ["#statusPanel"]
   },
-
   {
-    title: "System Status",
-    text: "Représente la 'vie' de votre système. Elle commence à 100%. Chaque malware qui réussit à toucher le CORE fait perdre de la vie. À 0%, le système est compromis (Game Over).",
-    highlights: ["#valIntegrity"],
-    subtitle: "Intégrité"
+    id: "integrity",
+    highlights: ["#valIntegrity"]
   },
-
   {
-    title: "System Status",
-    text: "Votre budget. Chaque paquet sain qui atteint le CORE vous rapporte de l'argent. Ce budget vous permet d'acheter des UPGRADES (améliorations).",
-    highlights: ["#valMoney", "#upgradePanel"],
-    subtitle: "Revenue"
+    id: "revenue",
+    highlights: ["#valMoney", "#upgradePanel"]
   },
-
   {
-    title: "System Status",
-    text: "Le temps écoulé (en secondes) depuis le démarrage du serveur. C'est votre score de survie !",
-    highlights: ["#valUptime"],
-    subtitle: "Uptime"
+    id: "uptime",
+    highlights: ["#valUptime"]
   },
-
   {
-    title: "System Status",
-    text: "Indique le niveau actuel d'apparition des paquets sur le réseau.",
-    highlights: ["#valTraffic"],
-    subtitle: "Traffic Load"
+    id: "traffic",
+    highlights: ["#valTraffic"]
   },
-
   {
-    title: "Le Processus : Analyser les logs",
-    text: "Gérer un pare-feu est un processus itératif. Vous ne pouvez pas deviner le trafic à l'avance; vous devez l'observer et vous adapter grâce au Traffic Log (Journal de trafic).",
-    highlights: ["#logPanel"],
-    subtitle: "Journal de trafic"
+    id: "logs",
+    highlights: ["#logPanel"]
   },
-
   {
-    title: "Le Processus : Analyser les logs",
-    text: "<b>Voici la boucle de travail idéale pour vous :</b><br> Observer (Drop) : Au début, regardez votre Traffic Log. Vous verrez des lignes indiquant Dropped [Forme]. Cela vous montre le trafic qui essaie d'entrer.",
-    highlights: ["#logPanel"],
-    subtitle: "Boucle de travail"
+    id: "loop",
+    highlights: ["#logPanel"]
   },
-
   {
-    title: "Le Processus : Analyser les logs",
-    text: "Identifiez un motif récurrent (par exemple, beaucoup de paquets carrés arrivent). L'argent va commencer à rentrer !",
-    highlights: ["#aclPanel"],
-    subtitle: "Autoriser le trafic"
+    id: "allow",
+    highlights: ["#aclPanel"]
   },
-
   {
-    title: "Le Processus : Analyser les logs",
-    text: "Gardez un œil sur le log. Si vous voyez un message orange CRITICAL: Malware breach!, cela signifie qu'un paquet infecté a utilisé la règle que vous venez de créer. Le log vous donnera ses caractéristiques exactes.",
+    id: "alert",
     highlights: ["#logPanel"],
     onEnter: () => {
       addLog(
         "CRITICAL: Malware breach! " + SHAPE_ICONS["Triangle"],
         "alert"
       );
-    },
-    subtitle: "Surveiller les alertes"
+    }
   },
-
   {
-    title: "Le Processus : Analyser les logs",
-    text: "Si le malware était un 'Triangle', retournez dans votre ACL et ajoutez une règle très spécifique pour bloquer (DROP) uniquement cette combinaison, afin de sécuriser la faille tout en gardant le reste du trafic ouvert.",
-    highlights: ["#aclPanel", "#logPanel"],
-    subtitle: "Ajuster les règles"
+    id: "adjust",
+    highlights: ["#aclPanel", "#logPanel"]
   }
 ];
 
@@ -219,6 +174,18 @@ function previousTutorialStep() {
   updateTutorial();
 }
 
+function getTutorialStep(index) {
+  const logicStep = tutorialMessages[index];
+  const text = TUTORIAL_TEXT[currentLanguage][logicStep.id];
+
+  return {
+    ...logicStep,
+    title: text.title,
+    subtitle: text.subtitle,
+    text: text.text
+  };
+}
+
 function updateTutorial() {
     if (tutorialStep >= tutorialMessages.length) {
     document.querySelector(".tutorial-panel").style.display = "none";
@@ -233,19 +200,20 @@ function updateTutorial() {
     document.getElementById("tutorialPreviousBtn").style.display = "block";
   }
 
-  let tutorial = tutorialMessages[tutorialStep];
+  const step = getTutorialStep(tutorialStep);
 
-  document.getElementById("tutorialContent").innerHTML = tutorial.text;
 
-  document.getElementById("tutorialTitle").innerText = tutorial.title;
-  document.getElementById("tutorialSubtitle").innerText = tutorial.subtitle;
+  document.getElementById("tutorialContent").innerHTML = step.text;
+
+  document.getElementById("tutorialTitle").innerText = step.title;
+  document.getElementById("tutorialSubtitle").innerText = step.subtitle;
   document.getElementById("tutorialReopenBtn").style.display = "none";
 
   clearTutorialHighlights();
-  for (let highlight of tutorial.highlights) {
+  for (let highlight of step.highlights) {
     highlightElement(highlight);
-    if (tutorial.onEnter) {
-      tutorial.onEnter();
+    if (step.onEnter) {
+      step.onEnter();
     }
   }
 }
@@ -1166,10 +1134,10 @@ function drawScenery() {
     ctx.fillStyle = "#333";
     ctx.font = "20px Courier New";
     ctx.textAlign = "center";
-    ctx.fillText("NORTH", centerX, 30);
-    ctx.fillText("SOUTH", centerX, canvas.height - 20);
-    ctx.fillText("WEST", 40, centerY);
-    ctx.fillText("EAST", canvas.width - 40, centerY);
+    ctx.fillText(t("north"), centerX, 30);
+    ctx.fillText(t("south"), centerX, canvas.height - 20);
+    ctx.fillText(t("west"), 40, centerY);
+    ctx.fillText(t("east"), canvas.width - 40, centerY);
   }
 
   if (state.heavyBastionActive) {
@@ -1202,7 +1170,7 @@ function drawScenery() {
   ctx.fillStyle = "#0f0";
   ctx.font = "12px Courier New";
   ctx.textAlign = "center";
-  ctx.fillText("CORE", centerX, centerY + 4);
+  ctx.fillText(t("core"), centerX, centerY + 4);
 
   // Draw Firewall Line
   ctx.beginPath();
@@ -1218,7 +1186,7 @@ function drawScenery() {
 
 
   ctx.fillStyle = "#3f3";
-  ctx.fillText("FIREWALL", centerX, centerY - firewallRadius - 10);
+  ctx.fillText(t("firewall"), centerX, centerY - firewallRadius - 10);
 
   ctx.textAlign = "left"; // reset
   ctx.restore();
@@ -1233,7 +1201,7 @@ function gameover() {
       ctx.fillStyle = "#f33";
       ctx.font = "30px Courier New";
       ctx.fillText(
-          "SYSTEM COMPROMISED",
+          t("systemCompromised"),
           canvas.width / 2,
           canvas.height / 2 - 80
       );
