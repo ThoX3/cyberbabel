@@ -9,19 +9,23 @@
     <body>
         <h1 data-i18n="title">// Network Perimeter Defense</h1>
 
-        <div class="language-selector">
-            <button onclick="setLanguage('en')">EN</button>
-            <button onclick="setLanguage('fr')">FR</button>
-        </div>
+        <div class="top-right-controls">
+            <div class="language-selector">
+                <button onclick="setLanguage('en')">EN</button>
+                <button onclick="setLanguage('fr')">FR</button>
+            </div>
 
-        <div class="tutorial-reopen-menu">
-            <button id="tutorialReopenBtn">
-                ?
-            </button>
+            <div class="tutorial-reopen-menu">
+                <button id="tutorialReopenBtn" onClick="openTutorialMenu()">
+                    ?
+                </button>
 
-            <div id="tutorialDropdown" class="tutorial-dropdown">
+                <div id="tutorialDropdown" class="tutorial-dropdown">
+                    <button id="tutorialDropdownCloseBtn" onclick="closeTutorialMenu()">X</button>
+                </div>
             </div>
         </div>
+
 
         <div class="game-layout">
             <div class="side-panels left-panels">

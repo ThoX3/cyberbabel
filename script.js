@@ -126,18 +126,18 @@ const tutorialMessages = [
   }
 ];
 
-document
-  .getElementById("tutorialReopenBtn")
-  .addEventListener("click", () => {
-    document
-      .getElementById("tutorialDropdown")
-      .classList.toggle("open");
-  });
+  function openTutorialMenu() {
+      document.getElementById("tutorialDropdown").classList.add("open");
+  }
+
+  function closeTutorialMenu() {
+      document.getElementById("tutorialDropdown").classList.remove("open");
+  }
 
 function buildTutorialMenu() {
   const dropdown = document.getElementById("tutorialDropdown");
 
-  dropdown.innerHTML = tutorialMessages.map(message => `
+  dropdown.innerHTML += tutorialMessages.map(message => `
     <button onclick="openTutorialAt(${tutorialMessages.indexOf(message)})">
       ${getTutorialStep(tutorialMessages.indexOf(message)).subtitle}
     </button>

@@ -283,6 +283,19 @@ select {
     color: var(--warning);
 }
 
+.top-right-controls {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    gap: 8px;
+
+    z-index: 50;
+}
+
 .tutorial-panel {
     position: fixed;
     top: 40px;
@@ -348,42 +361,22 @@ select {
     font-weight: 700;
 }
 
-#tutorialReopenBtn {
-    position: fixed;
-    top: 10px;
-    right: 10px;
-
-    width: 32px;
-    height: 32px;
-
-    border: 1px solid var(--border);
-    background: #000;
-    color: var(--text);
-
-    cursor: pointer;
-    font-weight: bold;
-    z-index: 20;
-}
-
 #tutorialReopenBtn:hover {
     background: var(--text);
     color: var(--bg);
 }
 
-.tutorial-reopen-menu {
-    position: fixed;
-    top: 10px;
-    right: 10px;
-    z-index: 30;
-}
-
 .tutorial-dropdown {
     display: none;
 
-    width: 260px;        /* fixed width */
-    max-height: 430px;   /* fixed height limit */
+    position: absolute;
+    top: 36px;
+    right: 0;
 
-    overflow-y: auto;    /* vertical scroll */
+    width: 260px;
+    max-height: 430px;
+
+    overflow-y: auto;
     overflow-x: hidden;
 
     background: #111;
@@ -391,14 +384,57 @@ select {
 
     padding: 6px;
     box-sizing: border-box;
-
-    margin-top: 6px;
 }
 
 .tutorial-dropdown.open {
     display: flex;
     flex-direction: column;
     gap: 6px;
+    padding-top: 6px;
+    position: absolute;
+}
+
+#tutorialDropdownCloseBtn {
+    position: sticky; /* keeps it visible while scrolling */
+    top: 0;
+
+    align-self: flex-end;
+
+    width: 22px;
+    height: 22px;
+
+    margin-left: auto;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid #3f3;
+    background: #000;
+    color: #0f0;
+
+    cursor: pointer;
+    font-weight: bold;
+    line-height: 1;
+
+    z-index: 2;
+
+    flex: 0 0 auto;
+}
+
+#tutorialDropdownCloseBtn:hover {
+    background: #0f0;
+    color: #000;
+}
+
+.tutorial-dropdown.open {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.tutorial-reopen-menu {
+    position: relative
 }
 
 .tutorial-dropdown button {
