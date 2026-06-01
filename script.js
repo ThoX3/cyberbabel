@@ -137,6 +137,10 @@ const tutorialMessages = [
 function buildTutorialMenu() {
   const dropdown = document.getElementById("tutorialDropdown");
 
+  dropdown.innerHTML = `
+    <button id="tutorialDropdownCloseBtn" onclick="closeTutorialMenu()">X</button>
+  `;
+
   dropdown.innerHTML += tutorialMessages.map(message => `
     <button onclick="openTutorialAt(${tutorialMessages.indexOf(message)})">
       ${getTutorialStep(tutorialMessages.indexOf(message)).subtitle}
@@ -352,7 +356,7 @@ function updateMalwarePatterns() {
 // Game State
 let state = {
   integrity: 100,
-  money: 0,
+  money: 1000000,
   uptime: 0,
   spawnRate: 0.8, // Seconds between spawns
   packetSpeed: 1.5,
@@ -753,7 +757,8 @@ function getPacketDescription(packet) {
   }
 
   if (isFeatureUnlocked("origin") && packet.origin) {
-    parts.push(packet.origin.substring(0, 3));
+    let text = tDir(packet.origin);
+    parts.push(text.substring(0, 3));
   }
 
   if (isFeatureUnlocked("rotation") && packet.rotation) {
@@ -864,7 +869,7 @@ const SIZE_ICONS = {
 
 function renderAcl() {
   const tbody = document.getElementById("aclList");
-
+  
   tbody.innerHTML = rules
     .map((r, i) => `
       <tr draggable="true" data-index="${i}">
@@ -889,7 +894,7 @@ function renderAcl() {
           : ""}
           
           ${isFeatureUnlocked("origin")
-          ? `<td>${r.origin.substring(0, 3)}</td>`
+          ? `<td>${tDir(r.origin).substring(0, 3)}</td>`
           : ""}
 
         <td>
@@ -944,13 +949,13 @@ function renderAclHeaders() {
   const header = document.getElementById("aclHeader");
 
   header.innerHTML = `
-    <th>Act</th>
+    <th>${t("aclAct")}</th>
 
-    ${isFeatureUnlocked("shape") ? "<th>Shp</th>" : ""}
-    ${isFeatureUnlocked("color") ? "<th>Col</th>" : ""}
-    ${isFeatureUnlocked("size") ? "<th>Siz</th>" : ""}
-    ${isFeatureUnlocked("rotation") ? "<th>Rot</th>" : ""}
-    ${isFeatureUnlocked("origin") ? "<th>Ori</th>" : ""}
+    ${isFeatureUnlocked("shape") ? `<th>${t("aclShape")}</th>` : ""}
+    ${isFeatureUnlocked("color") ? `<th>${t("aclColor")}</th>` : ""}
+    ${isFeatureUnlocked("size") ? `<th>${t("aclSize")}</th>` : ""}
+    ${isFeatureUnlocked("rotation") ? `<th>${t("aclRotation")}</th>` : ""}
+    ${isFeatureUnlocked("origin") ? `<th>${t("aclOrigin")}</th>` : ""}
     <th></th>
   `;
 }
@@ -1199,19 +1204,19 @@ function gameover() {
       ctx.font = "18px Courier New";
 
       ctx.fillText(
-          `Total Packets: ${state.totalPackets}`,
+          `${t("gameover.totalPackets")}: ${state.totalPackets}`,
           canvas.width / 2,
           canvas.height / 2 - 10
       );
 
       ctx.fillText(
-          `Correct Rejected Packets: ${state.correctRejectedPackets}`,
+          `${t("gameover.correctRejected")}: ${state.correctRejectedPackets}`,
           canvas.width / 2,
           canvas.height / 2 + 20
       );
 
       ctx.fillText(
-          `Incorrect Rejected Packets: ${state.incorrectRejectedPackets}`,
+          `${t("gameover.incorrectRejected")}: ${state.incorrectRejectedPackets}`,
           canvas.width / 2,
           canvas.height / 2 + 50
       );
@@ -1226,7 +1231,7 @@ function gameover() {
               : 0;
 
       ctx.fillText(
-          `False Positive Rate: ${rejectRate}%`,
+          `${t("gameover.falsePositiveRate")}: ${rejectRate}%`,
           canvas.width / 2,
           canvas.height / 2 + 80
       );
@@ -1236,7 +1241,7 @@ function gameover() {
       const seconds = (totalSeconds % 60).toString().padStart(2, '0');
 
       ctx.fillText(
-          `Time: ${minutes}m${seconds}s`,
+          `${t("gameover.time")}: ${minutes}m${seconds}s`,
           canvas.width / 2,
           canvas.height / 2 + 110
       );
@@ -1246,7 +1251,7 @@ function gameover() {
       ctx.fillStyle = "#aaa";
 
       ctx.fillText(
-          "Refresh to reboot.",
+          `${t("gameover.refresh")}`,
           canvas.width / 2,
           canvas.height / 2 + 140
       );

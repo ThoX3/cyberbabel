@@ -69,6 +69,27 @@ const LANG = {
           pattern_db_updated: "Pattern Analysis DB Synced. Blocking known malicious signatures.",
           dpi_module_deployed: "Deep Packet Inspection (DPI) Module Activated.",
           bandwidth_upgraded: "Bandwidth upgraded. Traffic Level: {trafficLevel}",
+        },
+
+        aclAct: "Act",
+        aclShape: "Shp",
+        aclColor: "Col",
+        aclSize: "Siz",
+        aclRotation: "Rot",
+        aclOrigin: "Ori",
+
+        aclOriginNorth: "N",
+        aclOriginEast: "E",
+        aclOriginSouth: "S",
+        aclOriginWest: "W",
+
+        gameover: {
+          totalPackets: "Total Packets",
+          correctRejected: "Correct Rejected Packets",
+          incorrectRejected: "Incorrect Rejected Packets",
+          falsePositiveRate: "False Positive Rate",
+          time: "Time",
+          refresh: "Refresh to reboot"
         }
     },
 
@@ -143,6 +164,27 @@ const LANG = {
           pattern_db_updated: "Base d'analyse des modèles synchronisée. Blocage des signatures malveillantes connues.",
           dpi_module_deployed: "Module d'inspection approfondie des paquets (DPI) activé.",
           bandwidth_upgraded: "Bande passante améliorée. Niveau de trafic : {trafficLevel}",
+        },
+
+        aclAct: "Act",
+        aclShape: "For",
+        aclColor: "Cou",
+        aclSize: "Tai",
+        aclRotation: "Rot",
+        aclOrigin: "Ori",
+
+        aclOriginNorth: "N",
+        aclOriginEast: "E",
+        aclOriginSouth: "S",
+        aclOriginWest: "O",
+
+        gameover: {
+          totalPackets: "Paquets totaux",
+          correctRejected: "Paquets rejetés correctement",
+          incorrectRejected: "Paquets rejetés incorrectement",
+          falsePositiveRate: "Taux de faux positifs",
+          time: "Temps",
+          refresh: "Redémarrez pour rejouer"
         }
     },
 };
@@ -335,6 +377,15 @@ const TUTORIAL_TEXT = {
 
 let currentLanguage = "en";
 
+function tDir(direction) {
+  if (!direction || direction === "*") return "*";
+
+  const key = direction.toLowerCase(); // "west"
+  const translated = t(key);           // "OUEST"
+
+  return translated;
+}
+
 function t(key, params = {}) {
     let text = key.split(".").reduce(
         (obj, part) => obj?.[part],
@@ -362,4 +413,6 @@ function applyLocalization() {
     });
 
     updateTutorial()
+    renderAclHeaders();
+    buildTutorialMenu();
 }
