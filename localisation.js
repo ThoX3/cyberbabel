@@ -360,4 +360,6 @@ function applyLocalization() {
         const key = el.dataset.i18n;
         el.innerHTML = t(key);
     });
+
+    updateTutorial()
 }
