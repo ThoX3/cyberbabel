@@ -139,7 +139,7 @@ function buildTutorialMenu() {
 
   dropdown.innerHTML = tutorialMessages.map(message => `
     <button onclick="openTutorialAt(${tutorialMessages.indexOf(message)})">
-      ${message.subtitle}
+      ${getTutorialStep(tutorialMessages.indexOf(message)).subtitle}
     </button>
   `).join("");
 }
