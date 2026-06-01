@@ -115,8 +115,7 @@ const tutorialMessages = [
     id: "alert",
     highlights: ["#logPanel"],
     onEnter: () => {
-      addLog(
-        "CRITICAL: Malware breach! " + SHAPE_ICONS["Triangle"],
+      addLog(t("logs.malware_breach", { damage: state.malwareDamage, description: getPacketDescription({ shape: "Triangle" }) }),
         "alert"
       );
     }
@@ -548,7 +547,6 @@ class Packet {
           break;
       }
     }
-    addLog(`Malware Spawned: ${getPacketDescription(this)}`, "alert");
   }
 
   draw() {
@@ -659,10 +657,7 @@ function evaluatePacket(packet) {
     if (Math.random() < percentage) {
       packet.status = "DROPPED";
 
-      addLog(
-        `DPI Blocked Malware: ${getPacketDescription(packet)}`,
-        "drop",
-      );
+      addLog(t("logs.dpi_block", { description: getPacketDescription(packet) }), "drop");
       state.correctRejectedPackets++;
       state.money += 1;
       return;
@@ -707,10 +702,7 @@ function evaluatePacket(packet) {
     if (rule.action === "DROP") {
       packet.status = "DROPPED";
 
-      addLog(
-        `Dropped ${getPacketDescription(packet)}`,
-        "drop",
-      );
+      addLog(t("logs.packet_dropped", { description: getPacketDescription(packet) }), "drop");
 
       if (packet.isMalware) {
       state.correctRejectedPackets++;
@@ -734,9 +726,9 @@ function evaluatePacket(packet) {
   const desc = getPacketDescription(packet);
 
   if (packet.status === "ALLOWED") {
-    addLog(`Allowed ${desc}`, "allow");
+    addLog(t("logs.packet_allowed", { description: desc }), "allow");
   } else {
-    addLog(`Dropped ${desc}`, "drop");
+    addLog(t("logs.packet_dropped", { description: desc }), "drop");
     if (packet.isMalware) {
       state.correctRejectedPackets++;
     }
@@ -778,8 +770,8 @@ function handleEndpoint(packet) {
       state.integrity -= damage;
       state.shakeFrames = 15;
       const logMsg = state.heavyBastionActive 
-        ? `Malware mitigated by Bastion! (-${damage}%)` 
-        : `CRITICAL: Malware breach! (-${damage}%) by (${getPacketDescription(packet)})`;
+        ? t("logs.bastion_activated", { damage: damage }) 
+        : t("logs.malware_breach", { damage: damage, description: getPacketDescription(packet) });
       addLog(logMsg, "alert");
     } else {
       state.money += packet.reward;
@@ -1002,7 +994,7 @@ function upgradeTraffic() {
     state.trafficCost = Math.floor(state.trafficCost * 1.8);
     document.getElementById("btnUpgradeTraffic").innerText =
       `Buy ($${state.trafficCost})`;
-    addLog(`Bandwidth upgraded. Traffic Level: ${state.trafficLevel}`, "allow");
+    addLog(t("logs.bandwidth_upgraded", { trafficLevel: state.trafficLevel }), "allow");
     syncRulesWithUnlocks();
     updateMalwarePatterns();
     renderAclHeaders();
@@ -1017,7 +1009,7 @@ function upgradeDPI() {
     state.dpiActive = true;
     document.getElementById("btnUpgradeDPI").innerText = "ACQUIRED";
     document.getElementById("btnUpgradeDPI").disabled = true;
-    addLog(`Deep Packet Inspection (DPI) Module Activated.`, "allow");
+    addLog(t("logs.dpi_module_deployed"), "allow");
     updateUI();
   }
 }
@@ -1028,10 +1020,7 @@ function upgradeThreatIntel() {
     state.threatIntelActive = true;
     document.getElementById("btnUpgradeIntel").innerText = "ACQUIRED";
     document.getElementById("btnUpgradeIntel").disabled = true;
-    addLog(
-      `Pattern Analysis DB Synced. Blocking known malicious signatures.`,
-      "allow",
-    );
+    addLog(t("logs.pattern_db_updated"), "allow");
     updateUI();
   }
 }
@@ -1046,7 +1035,7 @@ function deployHeavyBastion() {
     btn.innerText = "DEPLOYED";
     btn.disabled = true;
     
-    addLog("HEAVY BASTION deployed. Core integrity damage reduced by 50%.", "allow");
+    addLog(t("logs.heavy_bastion_deployed"), "allow");
     updateUI();
   }
 }
@@ -1058,7 +1047,7 @@ function repairSystem() {
     document.getElementById("btnRepair").innerText =
       `Repair System ($${state.repairCost})`;
     state.integrity = 100;
-    addLog(`System integrity restored.`, "allow");
+    addLog(t("logs.system_repaired"), "allow");
     updateUI();
   }
 }
@@ -1344,7 +1333,7 @@ function gameLoop() {
 
 // Initialize
 updateTutorial();
-addLog("Firewall initialized. Default policy: DROP ALL.");
+addLog(t("logs.firewall_initialized"));
 updateMalwarePatterns();
 buildTutorialMenu();
 renderAcl();

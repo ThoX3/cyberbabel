@@ -56,99 +56,20 @@ const LANG = {
         incorrectRejects: "Incorrect Rejects",
         falsePositiveRate: "False Positive Rate",
 
-        tutorial: {
-            steps: [
-                {
-                title: "Core Mechanics + ACL",
-                subtitle: "Introduction",
-                text: "Data packets (represented differently) arrive from everywhere and move toward the center of the screen, our CORE…"
-                },
-
-                {
-                title: "Core Mechanics + ACL",
-                subtitle: "Firewall",
-                text: "Halfway through, they cross the dotted line called FIREWALL. This is the exact moment your system decides their fate."
-                },
-
-                {
-                title: "Core Mechanics + ACL",
-                subtitle: "Default Policy",
-                text: "By default, the policy is \"DROP ALL\": absolutely every packet is destroyed at the border. Your system is 100% secure, but you earn no revenue."
-                },
-
-                {
-                title: "Core Mechanics + ACL",
-                subtitle: "ACL Rules",
-                text: "This is your primary weapon. You must use the ACL panel to create ALLOW rules that filter traffic based on their characteristics."
-                },
-
-                {
-                title: "Core Mechanics + ACL",
-                subtitle: "Malware",
-                text: "<b>The Trap</b><br>About 15% of generated packets are disguised malware. If one of your ALLOW rules is too permissive and lets malware reach the CORE, your system takes damage. On the other hand, if it is too strict, you may earn less money..."
-                },
-
-                {
-                title: "System Status",
-                subtitle: "System Status",
-                text: "This panel is your vital dashboard. It displays the health and profitability of your server in real time."
-                },
-
-                {
-                title: "System Status",
-                subtitle: "Integrity",
-                text: "Represents your system's 'health'. It starts at 100%. Each malware packet that reaches the CORE reduces integrity. At 0%, the system is compromised (Game Over)."
-                },
-
-                {
-                title: "System Status",
-                subtitle: "Revenue",
-                text: "Your budget. Every legitimate packet reaching the CORE earns money. This budget allows you to buy UPGRADES."
-                },
-
-                {
-                title: "System Status",
-                subtitle: "Uptime",
-                text: "The elapsed time (in seconds) since server startup. This is your survival score."
-                },
-
-                {
-                title: "System Status",
-                subtitle: "Traffic Load",
-                text: "Displays the current packet spawn intensity on the network."
-                },
-
-                {
-                title: "Analyzing Logs",
-                subtitle: "Traffic Log",
-                text: "Managing a firewall is an iterative process. You cannot predict traffic in advance; you must observe and adapt using the Traffic Log."
-                },
-
-                {
-                title: "Analyzing Logs",
-                subtitle: "Workflow",
-                text: "<b>Here is the ideal workflow:</b><br>Observe (Drop): At first, watch your Traffic Log. You will see messages such as Dropped [Shape]. This shows the traffic attempting to enter."
-                },
-
-                {
-                title: "Analyzing Logs",
-                subtitle: "Allowing Traffic",
-                text: "Identify recurring patterns (for example, many square packets arriving). Revenue will start flowing in."
-                },
-
-                {
-                title: "Analyzing Logs",
-                subtitle: "Monitoring Alerts",
-                text: "Watch the log carefully. If you see an orange message saying CRITICAL: Malware breach!, it means an infected packet used the rule you created. The log will reveal its exact characteristics."
-                },
-
-                {
-                title: "Analyzing Logs",
-                subtitle: "Adjusting Rules",
-                text: "If the malware was a 'Triangle', return to your ACL and add a very specific DROP rule blocking only that combination, securing the breach while keeping the rest of the traffic open."
-                }
-            ]
-        } 
+        logs: {
+          firewall_initialized: "Firewall initialized. Default policy: DROP ALL.",
+          malware_spawn: "Malware spawned: {description}",
+          bastion_activated: "Malware mitigated by Bastion! (-{damage}%)",
+          malware_breach: "CRITICAL: Malware breach! (-{damage}%) by {description}",
+          packet_dropped: "Dropped {description}",
+          packet_allowed: "Allowed {description}",
+          dpi_block: "DPI Blocked Malware: {description}",
+          system_repaired: "System integrity restored.",
+          heavy_bastion_deployed: "HEAVY BASTION deployed. Core integrity damage reduced by 50%.",
+          pattern_db_updated: "Pattern Analysis DB Synced. Blocking known malicious signatures.",
+          dpi_module_deployed: "Deep Packet Inspection (DPI) Module Activated.",
+          bandwidth_upgraded: "Bandwidth upgraded. Traffic Level: {trafficLevel}",
+        }
     },
 
     fr: {
@@ -208,6 +129,21 @@ const LANG = {
         rejectedPackets: "Paquets rejetés",
         incorrectRejects: "Rejets incorrects",
         falsePositiveRate: "Taux de faux positifs",
+
+        logs: {
+          firewall_initialized: "Pare-feu initialisé. Politique par défaut : TOUT BLOQUER.",
+          malware_spawn: "Malware détecté : {description}",
+          bastion_activated: "Malware atténué par le Bastion ! (-{damage}%)",
+          malware_breach: "CRITIQUE : Intrusion malware ! (-{damage}%) par {description}",
+          packet_dropped: "Bloqué : {description}",
+          packet_allowed: "Autorisé : {description}",
+          dpi_block: "Malware bloqué par le DPI : {description}",
+          system_repaired: "Intégrité du système restaurée.",
+          heavy_bastion_deployed: "BASTION LOURD déployé. Les dégâts au cœur sont réduits de 50 %.",
+          pattern_db_updated: "Base d'analyse des modèles synchronisée. Blocage des signatures malveillantes connues.",
+          dpi_module_deployed: "Module d'inspection approfondie des paquets (DPI) activé.",
+          bandwidth_upgraded: "Bande passante améliorée. Niveau de trafic : {trafficLevel}",
+        }
     },
 };
 
@@ -399,8 +335,19 @@ const TUTORIAL_TEXT = {
 
 let currentLanguage = "en";
 
-function t(key) {
-    return LANG[currentLanguage][key] || key;
+function t(key, params = {}) {
+    let text = key.split(".").reduce(
+        (obj, part) => obj?.[part],
+        LANG[currentLanguage]
+    );
+
+    if (!text) return key;
+
+    for (const [name, value] of Object.entries(params)) {
+        text = text.replaceAll(`{${name}}`, value);
+    }
+
+    return text;
 }
 
 function setLanguage(lang) {
