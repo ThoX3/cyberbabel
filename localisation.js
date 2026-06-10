@@ -24,7 +24,7 @@ const LANG = {
         repair: "Repair",
 
         addRule: "Add Rule",
-        defaultPolicy: "Default Policy: DROP ALL",
+        defaultPolicy: "Default Policy: DENY ALL",
 
         aclRuleAction: "Action",
         aclRuleShape: "Shape",
@@ -33,7 +33,7 @@ const LANG = {
         aclRuleRotation: "Rotation",
         aclRuleSize: "Size",
         allow: "ALLOW",
-        drop: "DROP",
+        drop: "DENY",
         critical: "CRITICAL",
 
         firewall: "FIREWALL",
@@ -57,11 +57,11 @@ const LANG = {
         falsePositiveRate: "False Positive Rate",
 
         logs: {
-          firewall_initialized: "Firewall initialized. Default policy: DROP ALL.",
+          firewall_initialized: "Firewall initialized. Default policy: DENY ALL.",
           malware_spawn: "Malware spawned: {description}",
           bastion_activated: "Malware mitigated by Bastion! (-{damage}%)",
           malware_breach: "CRITICAL: Malware breach! (-{damage}%) by {description}",
-          packet_dropped: "Dropped {description}",
+          packet_dropped: "Denied {description}",
           packet_allowed: "Allowed {description}",
           dpi_block: "DPI Blocked Malware: {description}",
           system_repaired: "System integrity restored.",
@@ -206,7 +206,7 @@ const TUTORIAL_TEXT = {
     default_policy: {
       title: "Core Mechanics + ACL",
       subtitle: "Default Policy",
-      text: "By default, the policy is DROP ALL: every packet is destroyed at the boundary. Safe, but no income is generated."
+      text: "By default, the policy is DENY ALL: every packet is destroyed at the boundary. Safe, but no income is generated."
     },
 
     acl: {
@@ -260,7 +260,7 @@ const TUTORIAL_TEXT = {
     loop: {
       title: "Traffic Analysis",
       subtitle: "Workflow",
-      text: "<b>Recommended loop:</b><br>Observe dropped packets → identify patterns → create ALLOW rules → refine."
+      text: "<b>Recommended loop:</b><br>Observe denied packets → identify patterns → create ALLOW rules → refine."
     },
 
     allow: {
@@ -278,7 +278,7 @@ const TUTORIAL_TEXT = {
     adjust: {
       title: "Traffic Analysis",
       subtitle: "Rule Adjustment",
-      text: "If a malware type leaks through, create a more specific DROP rule targeting that exact pattern."
+      text: "If a malware type leaks through, create a more specific DENY rule targeting that exact pattern."
     }
   },
 
@@ -298,7 +298,7 @@ const TUTORIAL_TEXT = {
     default_policy: {
       title: "Mécanique de base + ACL",
       subtitle: "Politique par défaut",
-      text: "Par défaut, la politique est DROP ALL : tous les paquets sont détruits à la frontière. Sécurisé mais aucun revenu."
+      text: "Par défaut, la politique est DENY ALL : tous les paquets sont détruits à la frontière. Sécurisé mais aucun revenu."
     },
 
     acl: {
@@ -370,7 +370,7 @@ const TUTORIAL_TEXT = {
     adjust: {
       title: "Analyse du trafic",
       subtitle: "Ajustement",
-      text: "Si un malware passe, ajoutez une règle DROP plus spécifique ciblant ce pattern exact."
+      text: "Si un malware passe, ajoutez une règle DENY plus spécifique ciblant ce pattern exact."
     }
   }
 };
