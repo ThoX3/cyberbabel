@@ -39,7 +39,6 @@ function clearTutorialHighlights() {
       el.classList.remove("tutorial-highlight");
     });
     highlightedCanvasElement = null;
-    document.querySelector(".tutorial-panel").classList.remove("tutorial-panel-left");
 }
 
 function highlightElement(selector) {
@@ -48,9 +47,6 @@ function highlightElement(selector) {
   highlightCanvasElement(selector);
   if (el) {
     el.classList.add("tutorial-highlight");
-    if (selector.startsWith("#aclPanel") || selector.startsWith("#logPanel")) {
-      document.querySelector(".tutorial-panel").classList.add("tutorial-panel-left");
-    }
   }
 }
 
@@ -368,6 +364,8 @@ let state = {
   trafficCost: 50,
   dpiCost: 300,
   threatIntelCost: 500,
+  logSortingActive: false,
+  logSortingCost: 250,
   repairCost: 100,
   gameOver: false,
   totalPackets: 0,
@@ -614,6 +612,8 @@ let logVisibility = {
 };
 
 function toggleLogType(type) {
+  if (!state.logSortingActive) return;
+
   logVisibility[type] = !logVisibility[type];
 
   const map = {
@@ -627,6 +627,21 @@ function toggleLogType(type) {
   btn.style.opacity = logVisibility[type] ? "1" : "0.4";
 
   renderLogs();
+}
+
+function updateLogFilterControls() {
+  const map = {
+    allow: "btnAllow",
+    drop: "btnDrop",
+    alert: "btnAlert"
+  };
+
+  Object.entries(map).forEach(([type, id]) => {
+    const btn = document.getElementById(id);
+    btn.disabled = !state.logSortingActive;
+    btn.classList.toggle("upgrade-locked", !state.logSortingActive);
+    btn.style.opacity = state.logSortingActive && !logVisibility[type] ? "0.4" : "1";
+  });
 }
 
 function addLog(msg, type = "allow") {
@@ -965,6 +980,7 @@ const UPGRADE_UNLOCKS = {
   traffic: 1,
   dpi: 4,
   threatIntel: 8,
+  logSorting: 3,
   repair: 1,
   heavyBastion: 6
 };
@@ -973,21 +989,22 @@ function isUpgradeUnlocked(type) {
   return state.trafficLevel >= UPGRADE_UNLOCKS[type];
 }
 
+function setUpgradeLocked(rowId, type) {
+  const row = document.getElementById(rowId);
+  const locked = !isUpgradeUnlocked(type);
+
+  row.style.display = "flex";
+  row.classList.toggle("upgrade-locked", locked);
+  row.setAttribute("aria-disabled", locked ? "true" : "false");
+}
+
 function updateUpgradeVisibility() {
-  document.getElementById("upgradeTraffic").style.display =
-    isUpgradeUnlocked("traffic") ? "flex" : "none";
-
-  document.getElementById("upgradeDPI").style.display =
-    isUpgradeUnlocked("dpi") ? "flex" : "none";
-
-  document.getElementById("upgradeIntel").style.display =
-    isUpgradeUnlocked("threatIntel") ? "flex" : "none";
-
-  document.getElementById("upgradeRepair").style.display =
-    isUpgradeUnlocked("repair") ? "flex" : "none";
-
-  document.getElementById("upgradeHeavyBastion").style.display = 
-    isUpgradeUnlocked("heavyBastion") ? "flex" : "none";
+  setUpgradeLocked("upgradeTraffic", "traffic");
+  setUpgradeLocked("upgradeDPI", "dpi");
+  setUpgradeLocked("upgradeIntel", "threatIntel");
+  setUpgradeLocked("upgradeLogSorting", "logSorting");
+  setUpgradeLocked("upgradeRepair", "repair");
+  setUpgradeLocked("upgradeHeavyBastion", "heavyBastion");
 }
 
 function upgradeTraffic() {
@@ -1030,6 +1047,20 @@ function upgradeThreatIntel() {
   }
 }
 
+function upgradeLogSorting() {
+  if (state.money >= state.logSortingCost && !state.logSortingActive) {
+    state.money -= state.logSortingCost;
+    state.logSortingActive = true;
+
+    const btn = document.getElementById("btnUpgradeLogSorting");
+    btn.innerText = "ACQUIRED";
+    btn.disabled = true;
+
+    addLog(t("logs.log_sorting_enabled"), "allow");
+    updateUI();
+  }
+}
+
 function deployHeavyBastion() {
   if (state.money >= state.heavyBastionCost && !state.heavyBastionActive) {
     state.money -= state.heavyBastionCost;
@@ -1066,17 +1097,26 @@ function updateUI() {
   document.getElementById("valTraffic").innerText = `Lv ${state.trafficLevel}`;
 
   document.getElementById("btnUpgradeTraffic").disabled =
-    state.money < state.trafficCost;
+    !isUpgradeUnlocked("traffic") || state.money < state.trafficCost;
   document.getElementById("btnUpgradeDPI").disabled =
-    state.money < state.dpiCost || state.dpiActive;
+    !isUpgradeUnlocked("dpi") || state.money < state.dpiCost || state.dpiActive;
   document.getElementById("btnUpgradeIntel").disabled =
-    state.money < state.threatIntelCost || state.threatIntelActive;
+    !isUpgradeUnlocked("threatIntel") ||
+    state.money < state.threatIntelCost ||
+    state.threatIntelActive;
+  document.getElementById("btnUpgradeLogSorting").disabled =
+    !isUpgradeUnlocked("logSorting") ||
+    state.money < state.logSortingCost ||
+    state.logSortingActive;
   document.getElementById("btnRepair").disabled =
-    state.money < state.repairCost || state.integrity >= 100;
+    !isUpgradeUnlocked("repair") || state.money < state.repairCost || state.integrity >= 100;
 
   const btnBastion = document.getElementById("btnUpgradeBastion");
   if (btnBastion) {
-    btnBastion.disabled = state.money < state.heavyBastionCost || state.heavyBastionActive;
+    btnBastion.disabled =
+      !isUpgradeUnlocked("heavyBastion") ||
+      state.money < state.heavyBastionCost ||
+      state.heavyBastionActive;
     if (state.heavyBastionActive) {
       btnBastion.innerText = "DEPLOYED";
     }
@@ -1086,6 +1126,7 @@ function updateUI() {
     state.gameOver = true;
   }
 
+  updateLogFilterControls();
   updateAclVisibility();
   updateUpgradeVisibility();
 }

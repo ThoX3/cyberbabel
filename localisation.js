@@ -16,6 +16,7 @@ const LANG = {
         bandwidth: "Bandwidth",
         dpiModule: "DPI Module",
         patternDb: "Pattern Analysis DB",
+        logSorting: "Log Sorting",
         heavyBastion: "Heavy Bastion",
         repairSystem: "Repair System",
 
@@ -68,6 +69,7 @@ const LANG = {
           heavy_bastion_deployed: "HEAVY BASTION deployed. Core integrity damage reduced by 50%.",
           pattern_db_updated: "Pattern Analysis DB Synced. Blocking known malicious signatures.",
           dpi_module_deployed: "Deep Packet Inspection (DPI) Module Activated.",
+          log_sorting_enabled: "Traffic log sorting enabled.",
           bandwidth_upgraded: "Bandwidth upgraded. Traffic Level: {trafficLevel}",
         },
 
@@ -110,6 +112,7 @@ const LANG = {
         bandwidth: "Bande passante",
         dpiModule: "Module DPI",
         patternDb: "Base d'analyse",
+        logSorting: "Tri du journal",
         heavyBastion: "Bastion lourd",
         repairSystem: "Système de réparation",
 
@@ -163,6 +166,7 @@ const LANG = {
           heavy_bastion_deployed: "BASTION LOURD déployé. Les dégâts au cœur sont réduits de 50 %.",
           pattern_db_updated: "Base d'analyse des modèles synchronisée. Blocage des signatures malveillantes connues.",
           dpi_module_deployed: "Module d'inspection approfondie des paquets (DPI) activé.",
+          log_sorting_enabled: "Tri du journal reseau active.",
           bandwidth_upgraded: "Bande passante améliorée. Niveau de trafic : {trafficLevel}",
         },
 

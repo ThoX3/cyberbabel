@@ -26,30 +26,20 @@
             </div>
         </div>
 
+            <div class="canvas-wrapper">
+                <canvas id="gameCanvas" width="800" height="600"></canvas>
+            </div>
+
+            <div class="status-bar">
+                <div><span data-i18n="integrity">Integrity:</span> <span id="valIntegrity">100%</span></div>
+                <div><span data-i18n="revenue">Revenue:</span> <span id="valMoney">$0</span></div>
+                <div><span data-i18n="uptime">Uptime:</span> <span id="valUptime">0m0s</span></div>
+                <div><span data-i18n="trafficLoad">Traffic:</span> <span id="valTraffic">Lv 1</span></div>
+            </div>
+
 
         <div class="game-layout">
-            <div class="side-panels left-panels">
-                <!-- System Status Panel -->
-                <div class="panel" id="statusPanel">
-                    <h2 data-i18n="systemStatus">System Status</h2>
-                    <div class="stat-row" data-tip="La vie du Firewall">
-                        <span data-i18n="integrity">Integrity:</span> <span id="valIntegrity">100%</span>
-                    </div>
-                    <div class="stat-row" data-tip="Les revenus générés">
-                        <span data-i18n="revenue">Data/Revenue:</span> <span id="valMoney">0$</span>
-                    </div>
-                    <div class="stat-row" data-tip="Le temps écoulé depuis le démarrage du serveur">
-                        <span data-i18n="uptime">Uptime:</span> <span id="valUptime">0m0s</span>
-                    </div>
-                    <div class="stat-row" data-tip="Le niveau du Firewall">
-                        <span data-i18n="trafficLoad">Traffic Load:</span> <span id="valTraffic">Low</span>
-                    </div>
-                    <div class="stat-row" style="margin-top: auto" data-tip="Active le son">
-                        <span data-i18n="audioMatrix">Audio Matrix:</span>
-                        <button id="btnMusic" onclick="toggleMusic()">OFF</button>
-                    </div>
-                </div>
-
+            <div class="bottom-panels">
                 <!-- Upgrades Panel -->
                 <div class="panel">
                     <h2 data-i18n="upgrades">Upgrades</h2>
@@ -71,6 +61,12 @@
                             <span data-i18n="buy">Buy</span> ($500)
                         </button>
                     </div>
+                    <div id="upgradeLogSorting" class="stat-row" data-tip="Active les filtres du journal reseau">
+                        <span data-i18n="logSorting">Log Sorting</span>
+                        <button id="btnUpgradeLogSorting" onclick="upgradeLogSorting()">
+                            <span data-i18n="buy">Buy</span> ($250)
+                        </button>
+                    </div>
                     <div id="upgradeHeavyBastion" class="stat-row" data-tip="Déploie une unité de défense massive qui absorbe 50% des dégâts critiques">
                         <span data-i18n="heavyBastion">Heavy Bastion</span>
                         <button id="btnUpgradeBastion" onclick="deployHeavyBastion()">
@@ -84,130 +80,123 @@
                         </button>
                     </div>
                 </div>
-            </div>
+                    <!-- ACL Management Panel -->
+                    <div class="panel acl-layout" id="aclPanel">
+                        <h2 data-i18n="aclTitle">Access Control (ACL)</h2>
 
-            <div class="canvas-wrapper">
-                <canvas id="gameCanvas" width="800" height="600"></canvas>
-            </div>
+                        <div class="acl-split">
 
-            <div class="side-panels right-panels">
-                <!-- ACL Management Panel -->
-                 <div class="panel acl-layout" id="aclPanel">
-                    <h2 data-i18n="aclTitle">Access Control (ACL)</h2>
+                            <!-- LEFT: rule builder -->
+                            <div class="acl-builder">
 
-                    <div class="acl-split">
+                                <div class="acl-controls">
 
-                        <!-- LEFT: rule builder -->
-                        <div class="acl-builder">
+                                    <div class="acl-group">
+                                        <span class="acl-label" data-i18n="aclRuleAction">Action</span>
+                                        <div class="acl-options">
+                                            <label>
+                                                <input type="radio" name="aclAction" value="ALLOW" checked>
+                                                ✅
+                                            </label>
 
-                            <div class="acl-controls">
+                                            <label>
+                                                <input type="radio" name="aclAction" value="DROP">
+                                                ⛔
+                                            </label>
+                                        </div>
+                                    </div>
 
-                                <div class="acl-group">
-                                    <span class="acl-label" data-i18n="aclRuleAction">Action</span>
-                                    <div class="acl-options">
-                                        <label>
-                                            <input type="radio" name="aclAction" value="ALLOW" checked>
-                                            ✅
-                                        </label>
+                                    <div class="acl-group" id="aclShape">
+                                        <span class="acl-label" data-i18n="aclRuleShape">Shape</span>
+                                        <div class="acl-options">
+                                            <label><input type="radio" name="aclShape" value="*" checked>*</label>
+                                            <label><input type="radio" name="aclShape" value="Square">□</label>
+                                            <label><input type="radio" name="aclShape" value="Circle">○</label>
+                                            <label><input type="radio" name="aclShape" value="Triangle">△</label>
+                                        </div>
+                                    </div>
 
-                                        <label>
-                                            <input type="radio" name="aclAction" value="DROP">
-                                            ⛔
-                                        </label>
+                                    <div class="acl-group" id="aclColor">
+                                        <span class="acl-label" data-i18n="aclRuleColor">Color</span>
+                                        <div class="acl-options">
+                                            <label><input type="radio" name="aclColor" value="*" checked>*</label>
+                                            <label><input type="radio" name="aclColor" value="Red">🟥</label>
+                                            <label><input type="radio" name="aclColor" value="Green">🟩</label>
+                                            <label><input type="radio" name="aclColor" value="Blue">🟦</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="acl-group" id="aclSize">
+                                        <span class="acl-label" data-i18n="aclRuleSize">Size</span>
+                                        <div class="acl-options">
+                                            <label><input type="radio" name="aclSize" value="*" checked>*</label>
+                                            <label><input type="radio" name="aclSize" value="Small">▫️</label>
+                                            <label><input type="radio" name="aclSize" value="Medium">◻️</label>
+                                            <label><input type="radio" name="aclSize" value="Large">⬜</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="acl-group" id="aclRotation">
+                                        <span class="acl-label" data-i18n="aclRuleRotation">Rotation</span>
+                                        <div class="acl-options">
+                                            <label><input type="radio" name="aclRotation" value="*" checked>*</label>
+                                            <label><input type="radio" name="aclRotation" value="0">0°</label>
+                                            <label><input type="radio" name="aclRotation" value="90">90°</label>
+                                            <label><input type="radio" name="aclRotation" value="180">180°</label>
+                                            <label><input type="radio" name="aclRotation" value="270">270°</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="acl-group" id="aclOrigin">
+                                        <span class="acl-label" data-i18n="aclRuleOrigin">Origin</span>
+                                        <div class="acl-options">
+                                            <label><input type="radio" name="aclOrigin" value="*" checked>*</label>
+                                            <label><input type="radio" name="aclOrigin" value="North"><span data-i18n="aclOriginNorth">N</span></label>
+                                            <label><input type="radio" name="aclOrigin" value="South"><span data-i18n="aclOriginSouth">S</span></label>
+                                            <label><input type="radio" name="aclOrigin" value="East"><span data-i18n="aclOriginEast">E</span></label>
+                                            <label><input type="radio" name="aclOrigin" value="West"><span data-i18n="aclOriginWest">W</span></label>
+                                        </div>
                                     </div>
                                 </div>
-
-                                <div class="acl-group" id="aclShape">
-                                    <span class="acl-label" data-i18n="aclRuleShape">Forme</span>
-                                    <div class="acl-options">
-                                        <label><input type="radio" name="aclShape" value="*" checked>*</label>
-                                        <label><input type="radio" name="aclShape" value="Square">□</label>
-                                        <label><input type="radio" name="aclShape" value="Circle">○</label>
-                                        <label><input type="radio" name="aclShape" value="Triangle">△</label>
-                                    </div>
-                                </div>
-
-                                <div class="acl-group" id="aclColor">
-                                    <span class="acl-label" data-i18n="aclRuleColor">Couleur</span>
-                                    <div class="acl-options">
-                                        <label><input type="radio" name="aclColor" value="*" checked>*</label>
-                                        <label><input type="radio" name="aclColor" value="Red">🟥</label>
-                                        <label><input type="radio" name="aclColor" value="Green">🟩</label>
-                                        <label><input type="radio" name="aclColor" value="Blue">🟦</label>
-                                    </div>
-                                </div>
-
-                                <div class="acl-group" id="aclSize">
-                                    <span class="acl-label" data-i18n="aclRuleSize">Taille</span>
-                                    <div class="acl-options">
-                                        <label><input type="radio" name="aclSize" value="*" checked>*</label>
-                                        <label><input type="radio" name="aclSize" value="Small">▫️</label>
-                                        <label><input type="radio" name="aclSize" value="Medium">◻️</label>
-                                        <label><input type="radio" name="aclSize" value="Large">⬜</label>
-                                    </div>
-                                </div>
-
-                                <div class="acl-group" id="aclRotation">
-                                    <span class="acl-label" data-i18n="aclRuleRotation">Rotation</span>
-                                    <div class="acl-options">
-                                        <label><input type="radio" name="aclRotation" value="*" checked>*</label>
-                                        <label><input type="radio" name="aclRotation" value="0">0°</label>
-                                        <label><input type="radio" name="aclRotation" value="90">90°</label>
-                                        <label><input type="radio" name="aclRotation" value="180">180°</label>
-                                        <label><input type="radio" name="aclRotation" value="270">270°</label>
-                                    </div>
-                                </div>
-
-                                <div class="acl-group" id="aclOrigin">
-                                    <span class="acl-label" data-i18n="aclRuleOrigin">Origine</span>
-                                    <div class="acl-options">
-                                        <label><input type="radio" name="aclOrigin" value="*" checked>*</label>
-                                        <label><input type="radio" name="aclOrigin" value="North"><span data-i18n="aclOriginNorth">N</span></label>
-                                        <label><input type="radio" name="aclOrigin" value="South"><span data-i18n="aclOriginSouth">S</span></label>
-                                        <label><input type="radio" name="aclOrigin" value="East"><span data-i18n="aclOriginEast">E</span></label>
-                                        <label><input type="radio" name="aclOrigin" value="West"><span data-i18n="aclOriginWest">W</span></label>
-                                    </div>
-                                </div>
+                                <button class="acl-send-button" onclick="addAclRule()" data-i18n="addRule">Add Rule</button>
                             </div>
-                            <button class="acl-send-button" onclick="addAclRule()" data-i18n="addRule">Add Rule</button>
-                        </div>
 
-                        <!-- RIGHT: rules table -->
-                        <div class="acl-table-container">
-                            <table class="acl-table">
-                                <thead>
-                                    <tr id="aclHeader">
-                                        <th>Act</th>
-                                        <th>Ori</th>
-                                        <th>Shp</th>
-                                        <th>Col</th>
-                                        <th>Siz</th>
-                                        <th>Rot</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody id="aclList"></tbody>
-                            </table>
-                            <div  class="acl-footer" data-i18n="defaultPolicy">
-                                Default Policy: DROP ALL
+                            <!-- RIGHT: rules table -->
+                            <div class="acl-table-container">
+                                <table class="acl-table">
+                                    <thead>
+                                        <tr id="aclHeader">
+                                            <th>Act</th>
+                                            <th>Ori</th>
+                                            <th>Shp</th>
+                                            <th>Col</th>
+                                            <th>Siz</th>
+                                            <th>Rot</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="aclList"></tbody>
+                                </table>
+                                <div  class="acl-footer" data-i18n="defaultPolicy">
+                                    Default Policy: DENY ALL
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
 
-                <!-- Traffic Log Panel -->
-                <div class="panel" id="logPanel">
-                    <h2 data-i18n="trafficLog">Traffic Log</h2>
-                    <div class="log-filters">
-                        <button onclick="toggleLogType('allow')" id="btnAllow" data-i18n="allow">ALLOW</button>
-                        <button onclick="toggleLogType('drop')" id="btnDrop" data-i18n="drop">DROP</button>
-                        <button onclick="toggleLogType('alert')" id="btnAlert" data-i18n="critical">CRITICAL</button>
+                    <!-- Traffic Log Panel -->
+                    <div class="panel" id="logPanel">
+                        <h2 data-i18n="trafficLog">Traffic Log</h2>
+                        <div class="log-filters">
+                            <button onclick="toggleLogType('allow')" id="btnAllow" data-i18n="allow">ALLOW</button>
+                            <button onclick="toggleLogType('drop')" id="btnDrop" data-i18n="drop">DROP</button>
+                            <button onclick="toggleLogType('alert')" id="btnAlert" data-i18n="critical">CRITICAL</button>
+                        </div>
+                        <div class="log-container" id="sysLog"></div>
                     </div>
-                    <div class="log-container" id="sysLog"></div>
                 </div>
             </div>
-        </div>
 
         <div class="tutorial-panel">
             <button id="tutorialCloseBtn" onclick="closeTutorial()">

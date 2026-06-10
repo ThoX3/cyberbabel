@@ -7,13 +7,13 @@
     --panel-bg: #0a0a0a;
 }
 .game-layout {
-    flex: 1;
+    flex: 0 0 auto;
     min-height: 0;
 
     display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 20px;
+    flex-direction: column;
+    gap: 15px;
+    padding-bottom: 12px;
 }
 body {
     background-color: var(--bg);
@@ -23,8 +23,9 @@ body {
     padding: 15px;
     height: 100vh;
     box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto auto;
+    gap: 12px;
     overflow: hidden; /* Désactive le scrolling de la page */
 }
 h1 {
@@ -36,25 +37,31 @@ h1 {
     flex-shrink: 0;
 }
 .canvas-wrapper {
-    flex: 1;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    min-width: 0;
     min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    container-type: size;
 }
 canvas {
     background-color: #000;
     border: 1px solid var(--border);
     box-shadow: 0 0 10px rgba(51, 255, 51, 0.2);
+    box-sizing: border-box;
 
-    width: 100%;
-    height: 100%;
+    width: min(100%, calc((100vh - 418px) * 4 / 3));
+    height: auto;
+    aspect-ratio: 4 / 3;
 
     max-width: 100%;
-    max-height: 100%;
+    max-height: 99%;
+}
+
+@supports (width: 1cqw) {
+    canvas {
+        width: min(100cqw, calc(100cqh * 4 / 3));
+    }
 }
 .dashboard {
     display: grid;
@@ -66,6 +73,7 @@ canvas {
 .panel {
     background: var(--panel-bg);
     border: 1px solid var(--border);
+    box-sizing: border-box;
 
     padding: 12px;
 
@@ -75,18 +83,36 @@ canvas {
     overflow: hidden;
 }
 
-.left-panels .panel,
-.right-panels .panel {
-    flex: 1;
-}
-.side-panels {
-    width: 500px;
-    height: 100%;
-
+.status-bar {
     display: flex;
-    flex-direction: column;
-    gap: 15px;
+    justify-content: center;
+    align-items: center;
+    gap: 28px;
+    justify-self: center;
+
+    background: var(--panel-bg);
+    border: 1px solid var(--border);
+
+    padding: 8px 18px;
+    font-size: 0.9rem;
 }
+
+.bottom-panels > .panel {
+    min-width: 0;
+    min-height: 0;
+}
+
+.bottom-panels {
+    height: 300px;
+
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 15px;
+
+    flex-shrink: 0;
+}
+
+
 .panel h2 {
     font-size: 1.1rem;
     margin: 0 0 10px 0;
@@ -100,6 +126,15 @@ canvas {
     align-items: center;
     margin-bottom: 8px;
     font-size: 0.9rem;
+}
+.stat-row.upgrade-locked {
+    color: #666;
+    opacity: 0.55;
+}
+.stat-row.upgrade-locked button {
+    border-color: #555;
+    color: #555;
+    cursor: not-allowed;
 }
 button {
     background: transparent;
@@ -119,6 +154,9 @@ button:disabled {
     border-color: #555;
     color: #555;
     cursor: not-allowed;
+}
+.log-filters button.upgrade-locked {
+    opacity: 0.55;
 }
 input,
 select {
@@ -143,53 +181,61 @@ select {
 /* SPLIT: left builder / right table */
 .acl-split {
     display: flex;
-    flex: 1;
+    flex-direction: column;
+    gap: 10px;
     min-height: 0;
-    gap: 12px;
+    flex: 1;
 }
 
 /* LEFT SIDE */
 .acl-builder {
-    width: 45%;
+    width: 100%;
     display: flex;
     flex-direction: column;
-    min-height: 0;
-    gap: 10px;
+    align-items: stretch;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+    gap: 8px;
 }
 
 /* RIGHT SIDE */
 .acl-table-container {
-    width: 55%;
+    width: 100%;
     display: flex;
     flex-direction: column;
     min-height: 0;
+    flex: 1;
 
     overflow-y: auto;
-    border-left: 1px solid #333;
-    padding-left: 10px;
+    border-top: 1px solid #333;
+    padding-top: 8px;
 }
 
 /* RULE CONTROLS STACK */
 .acl-controls {
     display: flex;
-    flex-direction: column;
-    gap: 10px;
-    overflow-y: auto;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 6px 8px;
+    flex: 1;
+    min-width: 0;
 }
 
 /* GROUPS */
 .acl-group {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     gap: 4px;
-    flex-wrap: nowrap;
-    align-items: flex-start;
+    flex-wrap: wrap;
+    align-items: center;
+    flex: 0 1 auto;
 }
 
 /* LABEL WIDTH */
 .acl-label {
-    width: 70px;
+    width: auto;
     color: #aaa;
+    font-size: 0.75rem;
 }
 
 /* RADIO HIDE */
@@ -206,10 +252,10 @@ select {
 /* CHIPS */
 .acl-group label {
     border: 1px solid #3f3;
-    padding: 4px 8px;
+    padding: 3px 6px;
     cursor: pointer;
     user-select: none;
-    font-size: 0.85rem;
+    font-size: 0.75rem;
 }
 
 /* SELECTED STATE */
@@ -221,6 +267,7 @@ select {
 /* TABLE */
 .acl-table {
     width: 100%;
+    table-layout: fixed;
     border-collapse: collapse;
     font-size: 0.75rem;
 }
@@ -233,7 +280,7 @@ select {
 }
 
 .acl-send-button {
-    margin-top: auto;
+    align-self: flex-end;
 }
 
 /* FOOTER */
@@ -318,11 +365,6 @@ select {
 
     z-index: 10;
 }  
-
-.tutorial-panel-left {
-    right:auto;
-    left:15px;
-}
 
 .tutorial-panel h2 {
     margin-top: 0;
