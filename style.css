@@ -178,112 +178,60 @@ select {
     min-height: 0;
 }
 
-/* SPLIT: left builder / right table */
-.acl-split {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    min-height: 0;
-    flex: 1;
-}
-
-/* LEFT SIDE */
-.acl-builder {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    flex-wrap: wrap;
-    flex-shrink: 0;
-    gap: 8px;
-}
-
-/* RIGHT SIDE */
-.acl-table-container {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-    flex: 1;
-
-    overflow-y: auto;
-    border-top: 1px solid #333;
-    padding-top: 8px;
-}
-
 /* RULE CONTROLS STACK */
 .acl-controls {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 6px 8px;
-    flex: 1;
-    min-width: 0;
+  display: flex;
+  flex-direction: column; /* key change */
+  gap: 10px;
+  width: 100%;
+  align-items: stretch;
 }
 
 /* GROUPS */
-.acl-group {
-    display: flex;
-    flex-direction: row;
-    gap: 4px;
-    flex-wrap: wrap;
-    align-items: center;
-    flex: 0 1 auto;
+.filter-group {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+
+  width: 100%;
+  flex: 0 0 auto;
 }
 
 /* LABEL WIDTH */
-.acl-label {
-    width: auto;
-    color: #aaa;
-    font-size: 0.75rem;
+.filter-group-title {
+  width: 80px; /* consistent left column */
+  flex-shrink: 0;
+  text-transform: uppercase;
 }
 
-/* RADIO HIDE */
-.acl-group input[type="radio"] {
-    display: none;
+.filter-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
 }
 
-.acl-options {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
+
+.filter-group button {
+  border: 1px solid #f33 !important;
+  font-family: system-ui, "Segoe UI Emoji", "Apple Color Emoji", sans-serif;
+
+    width: 32px;
+  height: 32px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+  font-size: 16px;
+  line-height: 1;
 }
 
-/* CHIPS */
-.acl-group label {
-    border: 1px solid #3f3;
-    padding: 3px 6px;
-    cursor: pointer;
-    user-select: none;
-    font-size: 0.75rem;
+.filter-group button.active {
+  border: 1px solid #0f0 !important;
 }
 
-/* SELECTED STATE */
-.acl-group label:has(input:checked) {
-    background: #0f0;
-    color: #000;
-}
-
-/* TABLE */
-.acl-table {
-    width: 100%;
-    table-layout: fixed;
-    border-collapse: collapse;
-    font-size: 0.75rem;
-}
-
-.acl-table th,
-.acl-table td {
-    border: 1px solid #333;
-    padding: 4px;
-    text-align: left;
-}
-
-.acl-send-button {
-    align-self: flex-end;
-}
-
-/* FOOTER */
 .acl-footer {
     margin-top: auto;
     font-size: 0.75rem;

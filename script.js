@@ -301,23 +301,6 @@ function isFeatureUnlocked(feature) {
   return state.trafficLevel >= FEATURE_UNLOCKS[feature];
 }
 
-function updateAclVisibility() {
-  document.getElementById("aclOrigin").style.display =
-    isFeatureUnlocked("origin") ? "" : "none";
-
-  document.getElementById("aclColor").style.display =
-    isFeatureUnlocked("color") ? "" : "none";
-
-  document.getElementById("aclSize").style.display =
-    isFeatureUnlocked("size") ? "" : "none";
-
-  document.getElementById("aclRotation").style.display =
-    isFeatureUnlocked("rotation") ? "" : "none";
-
-  document.getElementById("aclShape").style.display =
-    isFeatureUnlocked("shape") ? "" : "none";
-}
-
 // Malware
 let malwarePatterns = {
   shape: null,
@@ -379,7 +362,13 @@ let state = {
 };
 
 let packets = [];
-let rules = [];
+let filters = {
+  shape: {},
+  color: {},
+  size: {},
+  origin: {},
+  rotation: {}
+};
 let logs = [];
 let lastTime = performance.now();
 let spawnTimer = 0;
@@ -662,6 +651,16 @@ function renderLogs() {
     .join("");
 }
 
+function packetMatchesActiveFilters(packet) {
+  if (isFeatureUnlocked("size") && !filters.size[packet.sizeType]) return false;
+  if (isFeatureUnlocked("shape") && !filters.shape[packet.shape]) return false;
+  if (isFeatureUnlocked("color") && !filters.color[packet.color]) return false;
+  if (isFeatureUnlocked("origin") && !filters.origin[packet.origin]) return false;
+  if (isFeatureUnlocked("rotation") && !filters.rotation[packet.rotation]) return false;
+
+  return true;
+}
+
 function evaluatePacket(packet) {
   packet.evaluated = true;
 
@@ -683,62 +682,14 @@ function evaluatePacket(packet) {
     }
   }
 
-  // ACL Evaluation
-  let allowMatched = false;
+    var isAllowed = false;
 
-  for (let rule of rules) {
-    let oMatch =
-      !isFeatureUnlocked("origin") ||
-      rule.origin === "*" ||
-      rule.origin === packet.origin;
-
-    let sMatch =
-      !isFeatureUnlocked("shape") ||
-      rule.shape === "*" ||
-      rule.shape === packet.shape;
-
-    let cMatch =
-      !isFeatureUnlocked("color") ||
-      rule.color === "*" ||
-      rule.color === packet.color;
-
-    let szMatch =
-      !isFeatureUnlocked("size") ||
-      rule.size === "*" ||
-      rule.size === packet.sizeType;
-
-    let rMatch =
-      !isFeatureUnlocked("rotation") ||
-      rule.rot === "*" ||
-      rule.rot === packet.rotation;
-
-    const matched =
-      oMatch && sMatch && cMatch && szMatch && rMatch;
-
-    if (!matched) continue;
-
-    // DROP always has priority
-    if (rule.action === "DROP") {
-      packet.status = "DROPPED";
-
-      addLog(t("logs.packet_dropped", { description: getPacketDescription(packet) }), "drop");
-
-      if (packet.isMalware) {
-      state.correctRejectedPackets++;
-      }
-      else state.incorrectRejectedPackets++;
-
-      return;
+    if (packetMatchesActiveFilters(packet)) {
+    isAllowed = true
     }
-
-    // Remember ALLOW match
-    if (rule.action === "ALLOW") {
-      allowMatched = true;
-    }
-  }
 
   // Final decision
-  packet.status = allowMatched
+  packet.status = isAllowed
     ? "ALLOWED"
     : "DROPPED";
 
@@ -760,15 +711,15 @@ function getPacketDescription(packet) {
   let parts = [];
 
   if (isFeatureUnlocked("size") && packet.sizeType) {
-    parts.push(SIZE_ICONS[packet.sizeType] || packet.sizeType.substring(0, 3));
+    parts.push(filterEmojis[packet.sizeType] || packet.sizeType.substring(0, 3));
   }
 
   if (isFeatureUnlocked("color") && packet.color) {
-    parts.push(COLOR_ICONS[packet.color] || packet.color.substring(0, 3));
+    parts.push(filterEmojis[packet.color] || packet.color.substring(0, 3));
   }
 
   if (isFeatureUnlocked("shape") && packet.shape) {
-    parts.push(SHAPE_ICONS[packet.shape] || packet.shape.substring(0, 3));
+    parts.push(filterEmojis[packet.shape] || packet.shape.substring(0, 3));
   }
 
   if (isFeatureUnlocked("origin") && packet.origin) {
@@ -777,7 +728,7 @@ function getPacketDescription(packet) {
   }
 
   if (isFeatureUnlocked("rotation") && packet.rotation) {
-    parts.push(packet.rotation.substring(0, 3) + "°");
+    parts.push(filterEmojis[packet.rotation] || packet.rotation.substring(0, 3) + "°");
   }
 
   return parts.join(" ");
@@ -804,176 +755,107 @@ function spawnPacket() {
   state.totalPackets++;
 }
 
-// --- UI Controls ---
-
-function addAclRule() {
-  const action = getSelectedRadioValue("aclAction");
-  const origin = getSelectedRadioValue("aclOrigin");
-  const shape = getSelectedRadioValue("aclShape");
-  const color = getSelectedRadioValue("aclColor");
-  const size = getSelectedRadioValue("aclSize");
-  const rot = getSelectedRadioValue("aclRotation");
-
-  rules.push({
-    action,
-    origin: isFeatureUnlocked("origin") ? origin : null,
-    shape: isFeatureUnlocked("shape") ? shape : null,
-    color: isFeatureUnlocked("color") ? color : null,
-    size: isFeatureUnlocked("size") ? size : null,
-    rot: isFeatureUnlocked("rotation") ? rot : null,
-  });
-  renderAcl();
-}
-
-function getSelectedRadioValue(name) {
-  const checked = document.querySelector(`input[name="${name}"]:checked`);
-  return checked ? checked.value : "*";
-}
-
-function syncRulesWithUnlocks() {
-  for (let rule of rules) {
-    if (isFeatureUnlocked("origin") && rule.origin == null) {
-      rule.origin = "*";
-    }
-
-    if (isFeatureUnlocked("shape") && rule.shape == null) {
-      rule.shape = "*";
-    }
-
-    if (isFeatureUnlocked("color") && rule.color == null) {
-      rule.color = "*";
-    }
-
-    if (isFeatureUnlocked("size") && rule.size == null) {
-      rule.size = "*";
-    }
-
-    if (isFeatureUnlocked("rotation") && rule.rot == null) {
-      rule.rot = "*";
-    }
-  }
-}
-
-function removeAclRule(index) {
-  rules.splice(index, 1);
-  renderAcl();
-}
-
-const STATUS_ICONS = {
-  ALLOW: "✅",
-  DROP: "⛔"
-}
-
-const SHAPE_ICONS = {
+const filterEmojis = {
   Square: "&#9633",
   Circle: "&#9675",
-  Triangle: "&#9651"
-};
+  Triangle: "&#9651",
 
-const COLOR_ICONS = {
   Red: "🟥",
   Green: "🟩",
-  Blue: "🟦"
-};
+  Blue: "🟦",
 
-const SIZE_ICONS = {
   Small: "▫️",
   Medium: "◻️",
-  Large: "⬜"
+  Large: "⬜",
+
+  North: "⬆️",
+  South: "⬇️",
+  East: "➡️",
+  West: "⬅️",
+
+  "0": "0°",
+  "90": "90°",
+  "180": "180°",
+  "270": "270°"
 };
 
-function renderAcl() {
-  const tbody = document.getElementById("aclList");
-  
-  tbody.innerHTML = rules
-    .map((r, i) => `
-      <tr draggable="true" data-index="${i}">
-        <td style="color: ${r.action === "ALLOW" ? "#0f0" : "#f33"}">
-          ${STATUS_ICONS[r.action]}
-        </td>
 
-        ${isFeatureUnlocked("shape")
-          ? `<td>${SHAPE_ICONS[r.shape] || r.shape.substring(0, 3)}</td>`
-          : ""}
-
-        ${isFeatureUnlocked("color")
-          ? `<td>${COLOR_ICONS[r.color] || r.color.substring(0, 3)}</td>`
-          : ""}
-
-        ${isFeatureUnlocked("size")
-          ? `<td>${SIZE_ICONS[r.size] || r.size.substring(0, 3)}</td>`
-          : ""}
-
-        ${isFeatureUnlocked("rotation")
-          ? `<td>${r.rot === "*" ? "*" : r.rot + "°"}</td>`
-          : ""}
-          
-          ${isFeatureUnlocked("origin")
-          ? `<td>${tDir(r.origin).substring(0, 3)}</td>`
-          : ""}
-
-        <td>
-          <button onclick="removeAclRule(${i})">X</button>
-        </td>
-      </tr>
-    `)
-    .join("");
-
-    attachDragHandlers();
+function initializeFilters() {
+  SHAPES.forEach(s => filters.shape[s] = false);
+  COLORS.forEach(c => filters.color[c] = false);
+  SIZES.forEach(s => filters.size[s] = false);
+  ORIGINS.forEach(o => filters.origin[o] = false);
+  ROTATIONS.forEach(r => filters.rotation[r] = false);
 }
 
-let dragStartIndex = null;
+// --- UI Controls ---
+function toggleFilter(category, value) {
+  filters[category][value] =
+    !filters[category][value];
 
-function moveRule(from, to) {
-  const moved = rules.splice(from, 1)[0];
-  rules.splice(to, 0, moved);
-
-  renderAcl();
+  renderFilters();
 }
 
-function attachDragHandlers() {
-  const rows = document.querySelectorAll("#aclList tr");
+function renderFilterGroup(containerId, category, values) {
+  const container = document.getElementById(containerId);
 
-  rows.forEach(row => {
-    row.addEventListener("dragstart", (e) => {
-      dragStartIndex = Number(row.dataset.index);
-      row.style.opacity = "0.5";
-    });
+  if (!isFeatureUnlocked(category)) {
+    container.innerHTML = "";
+    return;
+  }
 
-    row.addEventListener("dragend", (e) => {
-      row.style.opacity = "1";
-    });
+  container.innerHTML = `
+    <div class="filter-group">
+      <div class="filter-group-title">${category}</div>
+      <div class="filter-buttons">
+        ${values.map(value => {
+          const icon = filterEmojis[value] ?? "❓";
 
-    row.addEventListener("dragover", (e) => {
-      e.preventDefault();
-    });
-
-    row.addEventListener("drop", (e) => {
-      e.preventDefault();
-
-      const dragEndIndex = Number(row.dataset.index);
-
-      if (dragStartIndex === null || dragEndIndex === dragStartIndex) return;
-
-      moveRule(dragStartIndex, dragEndIndex);
-    });
-  });
-}
-
-function renderAclHeaders() {
-  const header = document.getElementById("aclHeader");
-
-  header.innerHTML = `
-    <th>${t("aclAct")}</th>
-
-    ${isFeatureUnlocked("shape") ? `<th>${t("aclShape")}</th>` : ""}
-    ${isFeatureUnlocked("color") ? `<th>${t("aclColor")}</th>` : ""}
-    ${isFeatureUnlocked("size") ? `<th>${t("aclSize")}</th>` : ""}
-    ${isFeatureUnlocked("rotation") ? `<th>${t("aclRotation")}</th>` : ""}
-    ${isFeatureUnlocked("origin") ? `<th>${t("aclOrigin")}</th>` : ""}
-    <th></th>
+          return `
+            <button
+              class="${filters[category][value] ? "active" : ""}"
+              onclick="toggleFilter('${category}', '${value}')">
+              ${icon}
+            </button>
+          `;
+        }).join("")}
+      </div>
+    </div>
   `;
 }
+
+function renderFilters() {
+  renderFilterGroup(
+    "shapeFilters",
+    "shape",
+    SHAPES
+  );
+
+  renderFilterGroup(
+    "colorFilters",
+    "color",
+    COLORS
+  );
+
+  renderFilterGroup(
+    "sizeFilters",
+    "size",
+    SIZES
+  );
+
+  renderFilterGroup(
+    "originFilters",
+    "origin",
+    ORIGINS
+  );
+
+  renderFilterGroup(
+    "rotationFilters",
+    "rotation",
+    ROTATIONS
+  );
+}
+
 
 // --- Upgrades ---
 const UPGRADE_UNLOCKS = {
@@ -1017,10 +899,8 @@ function upgradeTraffic() {
     document.getElementById("btnUpgradeTraffic").innerText =
       `Buy ($${state.trafficCost})`;
     addLog(t("logs.bandwidth_upgraded", { trafficLevel: state.trafficLevel }), "allow");
-    syncRulesWithUnlocks();
     updateMalwarePatterns();
-    renderAclHeaders();
-    renderAcl();
+    renderFilters();
     updateUI();
   }
 }
@@ -1127,7 +1007,6 @@ function updateUI() {
   }
 
   updateLogFilterControls();
-  updateAclVisibility();
   updateUpgradeVisibility();
 }
 
@@ -1380,8 +1259,8 @@ function gameLoop() {
 // Initialize
 updateTutorial();
 addLog(t("logs.firewall_initialized"));
+initializeFilters();
+renderFilters();
 updateMalwarePatterns();
 buildTutorialMenu();
-renderAcl();
-renderAclHeaders();
 gameLoop();
