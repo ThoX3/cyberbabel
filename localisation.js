@@ -23,6 +23,8 @@ const LANG = {
         buy: "Buy",
         deploy: "Deploy",
         repair: "Repair",
+        acquired: "Acquired",
+        deployed: "Deployed",
 
         addRule: "Add Rule",
         defaultPolicy: "Default Policy: DENY ALL",
@@ -71,19 +73,14 @@ const LANG = {
           dpi_module_deployed: "Deep Packet Inspection (DPI) Module Activated.",
           log_sorting_enabled: "Traffic log sorting enabled.",
           bandwidth_upgraded: "Bandwidth upgraded. Traffic Level: {trafficLevel}",
+          log_sorting_enabled: "Log sorting enabled.",
         },
 
-        aclAct: "Act",
-        aclShape: "Shp",
-        aclColor: "Col",
-        aclSize: "Siz",
-        aclRotation: "Rot",
-        aclOrigin: "Ori",
-
-        aclOriginNorth: "N",
-        aclOriginEast: "E",
-        aclOriginSouth: "S",
-        aclOriginWest: "W",
+        shape: "Shape",
+        color: "Color",
+        size: "Size",
+        origin: "Origin",
+        rotation: "Rotation",
 
         gameover: {
           totalPackets: "Total Packets",
@@ -119,16 +116,17 @@ const LANG = {
         buy: "Acheter",
         deploy: "Déployer",
         repair: "Réparer",
+        acquired: "Acquis",
+        deployed: "Déployé",
 
         addRule: "Ajouter une règle",
         defaultPolicy: "Politique par défaut : TOUT BLOQUER",
 
-        aclRuleAction: "Action",
-        aclRuleShape: "Forme",
-        aclRuleColor: "Couleur",
-        aclRuleOrigin: "Origine",
-        aclRuleRotation: "Rotation",
-        aclRuleSize: "Taille",
+        shape: "Forme",
+        color: "Couleur",
+        size: "Taille",
+        origin: "Origine",
+        rotation: "Rotation",
         
         firewall: "PARE-FEU",
         core: "Noyau",
@@ -136,11 +134,6 @@ const LANG = {
         allow: "AUTORISER",
         drop: "BLOQUER",
         critical: "CRITIQUE",
-
-        north: "NORD",
-        east: "EST",
-        south: "SUD",
-        west: "OUEST",
 
         tutorial: "Tutoriel",
         previous: "Précédent",
@@ -168,19 +161,8 @@ const LANG = {
           dpi_module_deployed: "Module d'inspection approfondie des paquets (DPI) activé.",
           log_sorting_enabled: "Tri du journal reseau active.",
           bandwidth_upgraded: "Bande passante améliorée. Niveau de trafic : {trafficLevel}",
+          log_sorting_enabled: "Tri du journal activé.",
         },
-
-        aclAct: "Act",
-        aclShape: "For",
-        aclColor: "Cou",
-        aclSize: "Tai",
-        aclRotation: "Rot",
-        aclOrigin: "Ori",
-
-        aclOriginNorth: "N",
-        aclOriginEast: "E",
-        aclOriginSouth: "S",
-        aclOriginWest: "O",
 
         gameover: {
           totalPackets: "Paquets totaux",
@@ -417,6 +399,6 @@ function applyLocalization() {
     });
 
     updateTutorial()
-    renderAclHeaders();
     buildTutorialMenu();
+    refreshUpgradeButtons();
 }

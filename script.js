@@ -137,13 +137,12 @@ function buildTutorialMenu() {
     <button id="tutorialDropdownCloseBtn" onclick="closeTutorialMenu()">X</button>
   `;
 
-  dropdown.innerHTML += tutorialMessages.map(message => `
-    <button onclick="openTutorialAt(${tutorialMessages.indexOf(message)})">
-      ${getTutorialStep(tutorialMessages.indexOf(message)).subtitle}
+  dropdown.innerHTML += tutorialMessages.map((message, index) => `
+    <button onclick="openTutorialAt(${index})">
+      ${TUTORIAL_TEXT[currentLanguage][tutorialMessages[index].id].subtitle}
     </button>
   `).join("");
 }
-
 function openTutorialAt(stepIndex) {
   tutorialStep = stepIndex;
 
@@ -335,7 +334,7 @@ function updateMalwarePatterns() {
 // Game State
 let state = {
   integrity: 100,
-  money: 0,
+  money: 10000,
   uptime: 0,
   spawnRate: 0.8, // Seconds between spawns
   packetSpeed: 1.5,
@@ -806,7 +805,7 @@ function renderFilterGroup(containerId, category, values) {
 
   container.innerHTML = `
     <div class="filter-group">
-      <div class="filter-group-title">${category}</div>
+      <div data-i18n=${category} class="filter-group-title">${t(category)}</div>
       <div class="filter-buttons">
         ${values.map(value => {
           const icon = filterEmojis[value] ?? "❓";
@@ -889,6 +888,35 @@ function updateUpgradeVisibility() {
   setUpgradeLocked("upgradeHeavyBastion", "heavyBastion");
 }
 
+function refreshUpgradeButtons() {
+  document.getElementById("btnUpgradeTraffic").innerText =
+    `${t("buy")} ($${state.trafficCost})`;
+
+  document.getElementById("btnUpgradeDPI").innerText =
+    state.dpiActive
+      ? t("acquired")
+      : `${t("buy")} ($${state.dpiCost})`;
+
+  document.getElementById("btnUpgradeIntel").innerText =
+    state.threatIntelActive
+      ? t("acquired")
+      : `${t("buy")} ($${state.threatIntelCost})`;
+
+  document.getElementById("btnUpgradeLogSorting").innerText =
+    state.logSortingActive
+      ? t("acquired")
+      : `${t("buy")} ($${state.logSortingCost})`;
+
+  document.getElementById("btnUpgradeBastion").innerText =
+    state.heavyBastionActive
+      ? t("deployed")
+      : `${t("deploy")} ($${state.heavyBastionCost})`;
+
+  document.getElementById("btnRepair").innerText =
+    `${t("repair")} ($${state.repairCost})`;
+}
+
+
 function upgradeTraffic() {
   if (state.money >= state.trafficCost) {
     state.money -= state.trafficCost;
@@ -897,7 +925,7 @@ function upgradeTraffic() {
     state.spawnRate = Math.max(0.01, state.spawnRate - 0.15);
     state.trafficCost = Math.floor(state.trafficCost * 1.8);
     document.getElementById("btnUpgradeTraffic").innerText =
-      `Buy ($${state.trafficCost})`;
+      `${t("buy")} ($${state.trafficCost})`;
     addLog(t("logs.bandwidth_upgraded", { trafficLevel: state.trafficLevel }), "allow");
     updateMalwarePatterns();
     renderFilters();
@@ -909,7 +937,7 @@ function upgradeDPI() {
   if (state.money >= state.dpiCost && !state.dpiActive) {
     state.money -= state.dpiCost;
     state.dpiActive = true;
-    document.getElementById("btnUpgradeDPI").innerText = "ACQUIRED";
+    document.getElementById("btnUpgradeDPI").innerText = `${t("acquired")}`;
     document.getElementById("btnUpgradeDPI").disabled = true;
     addLog(t("logs.dpi_module_deployed"), "allow");
     updateUI();
@@ -920,7 +948,7 @@ function upgradeThreatIntel() {
   if (state.money >= state.threatIntelCost && !state.threatIntelActive) {
     state.money -= state.threatIntelCost;
     state.threatIntelActive = true;
-    document.getElementById("btnUpgradeIntel").innerText = "ACQUIRED";
+    document.getElementById("btnUpgradeIntel").innerText = `${t("acquired")}`;
     document.getElementById("btnUpgradeIntel").disabled = true;
     addLog(t("logs.pattern_db_updated"), "allow");
     updateUI();
@@ -933,7 +961,7 @@ function upgradeLogSorting() {
     state.logSortingActive = true;
 
     const btn = document.getElementById("btnUpgradeLogSorting");
-    btn.innerText = "ACQUIRED";
+    btn.innerText = `${t("acquired")}`;
     btn.disabled = true;
 
     addLog(t("logs.log_sorting_enabled"), "allow");
@@ -948,7 +976,7 @@ function deployHeavyBastion() {
     
     // Mise à jour du bouton
     const btn = document.getElementById("btnUpgradeBastion");
-    btn.innerText = "DEPLOYED";
+    btn.innerText = `${t("deployed")}`;
     btn.disabled = true;
     
     addLog(t("logs.heavy_bastion_deployed"), "allow");
@@ -997,9 +1025,6 @@ function updateUI() {
       !isUpgradeUnlocked("heavyBastion") ||
       state.money < state.heavyBastionCost ||
       state.heavyBastionActive;
-    if (state.heavyBastionActive) {
-      btnBastion.innerText = "DEPLOYED";
-    }
   }
 
   if (state.integrity <= 0) {
@@ -1263,4 +1288,5 @@ initializeFilters();
 renderFilters();
 updateMalwarePatterns();
 buildTutorialMenu();
+refreshUpgradeButtons();
 gameLoop();

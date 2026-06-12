@@ -41,42 +41,36 @@
         <div class="game-layout">
             <div class="bottom-panels">
                 <!-- Upgrades Panel -->
-                <div class="panel">
+                <div class="panel shop">
                     <h2 data-i18n="upgrades">Upgrades</h2>
                     <div id="upgradeTraffic" class="stat-row" data-tip="Accélère la fréquence d'apparition des paquets à l'écran">
                         <span data-i18n="bandwidth">Bandwidth</span>
-                        <button id="btnUpgradeTraffic" onclick="upgradeTraffic()">
-                            <span data-i18n="buy">Buy</span> ($50)
+                        <button id="btnUpgradeTraffic" onclick="upgradeTraffic()" data>
                         </button>
                     </div>
                     <div id="upgradeDPI" class="stat-row" data-tip="Améliore la capacité d'analyse des paquets">
                         <span data-i18n="dpiModule">DPI Module</span>
                         <button id="btnUpgradeDPI" onclick="upgradeDPI()">
-                            <span data-i18n="buy">Buy</span> ($300)
                         </button>
                     </div>
                     <div id="upgradeIntel" class="stat-row" data-tip="Améliore la base de données d'analyse des modèles">
                         <span data-i18n="patternDb">Pattern Analysis DB</span>
                         <button id="btnUpgradeIntel" onclick="upgradeThreatIntel()">
-                            <span data-i18n="buy">Buy</span> ($500)
                         </button>
                     </div>
                     <div id="upgradeLogSorting" class="stat-row" data-tip="Active les filtres du journal reseau">
                         <span data-i18n="logSorting">Log Sorting</span>
                         <button id="btnUpgradeLogSorting" onclick="upgradeLogSorting()">
-                            <span data-i18n="buy">Buy</span> ($250)
                         </button>
                     </div>
                     <div id="upgradeHeavyBastion" class="stat-row" data-tip="Déploie une unité de défense massive qui absorbe 50% des dégâts critiques">
                         <span data-i18n="heavyBastion">Heavy Bastion</span>
                         <button id="btnUpgradeBastion" onclick="deployHeavyBastion()">
-                            <span data-i18n="deploy">Deploy</span> ($750)
                         </button>
                     </div>
                     <div id="upgradeRepair" class="stat-row" style="margin-top: auto" data-tip="Répare le Firewall">
                         <span data-i18n="repairSystem">Repair System</span>
                         <button id="btnRepair" onclick="repairSystem()">
-                            <span data-i18n="repair">Repair</span> ($100)
                         </button>
                     </div>
                 </div>

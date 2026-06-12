@@ -112,6 +112,10 @@ canvas {
     flex-shrink: 0;
 }
 
+.shop button {
+    width: 150px;
+}
+
 
 .panel h2 {
     font-size: 1.1rem;
