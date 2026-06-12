@@ -212,7 +212,7 @@ select {
 .filter-buttons {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 10px;
 }
 
 
@@ -220,8 +220,8 @@ select {
   border: 1px solid #f33 !important;
   font-family: system-ui, "Segoe UI Emoji", "Apple Color Emoji", sans-serif;
 
-    width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
 
   display: flex;
   align-items: center;

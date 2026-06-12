@@ -291,9 +291,9 @@ function toggleMusic() {
 const FEATURE_UNLOCKS = {
   shape: 1,
   color: 2,
-  size: 3,
-  rotation: 5,
-  origin: 6,
+  // size: 3,
+  rotation: 3,
+  origin: 5,
 };
 
 function isFeatureUnlocked(feature) {
@@ -723,7 +723,7 @@ function getPacketDescription(packet) {
 
   if (isFeatureUnlocked("origin") && packet.origin) {
     let text = tDir(packet.origin);
-    parts.push(text.substring(0, 3));
+    parts.push(filterEmojis[packet.origin] || text.substring(0, 3));
   }
 
   if (isFeatureUnlocked("rotation") && packet.rotation) {
@@ -836,11 +836,11 @@ function renderFilters() {
     COLORS
   );
 
-  renderFilterGroup(
+  /*renderFilterGroup(
     "sizeFilters",
     "size",
     SIZES
-  );
+  );*/
 
   renderFilterGroup(
     "originFilters",
