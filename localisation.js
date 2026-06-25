@@ -6,6 +6,7 @@ const LANG = {
         upgrades: "Upgrades",
         aclTitle: "Access Control (ACL)",
         trafficLog: "Traffic Log",
+        gameMonitor: "Firewall Monitor",
 
         integrity: "Integrity",
         revenue: "Data/Revenue",
@@ -100,6 +101,7 @@ const LANG = {
         aclTitle: "Contrôle d'accès (ACL)",
         trafficLog: "Journal réseau",
         audioMatrix: "Matrice audio",
+        gameMonitor: "Moniteur du pare-feu",
 
         integrity: "Intégrité",
         revenue: "Données/Revenus",

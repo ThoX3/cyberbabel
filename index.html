@@ -6,8 +6,7 @@
         <title>Firewall Tower Defense</title>
         <link rel="stylesheet" href="style.css" />
     </head>
-    <body>
-        <h1 data-i18n="title">// Network Perimeter Defense</h1>
+<body>
 
         <div class="top-right-controls">
             <div class="language-selector">
@@ -16,97 +15,136 @@
             </div>
 
             <div class="tutorial-reopen-menu">
-                <button id="tutorialReopenBtn" onClick="openTutorialMenu()">
+                <button id="tutorialReopenBtn" onclick="openTutorialMenu()">
                     ?
                 </button>
 
                 <div id="tutorialDropdown" class="tutorial-dropdown">
-                    <button id="tutorialDropdownCloseBtn" onclick="closeTutorialMenu()">X</button>
+                    <button id="tutorialDropdownCloseBtn" onclick="closeTutorialMenu()">
+                        X
+                    </button>
                 </div>
             </div>
         </div>
 
-            <div class="canvas-wrapper">
-                <canvas id="gameCanvas" width="800" height="600"></canvas>
+    <!-- Game canvas -->
+    <div class="window" id="gameWindow">
+        <div class="window-header" data-i18n="gameMonitor">Firewall Monitor</div>
+
+        <div class="canvas-wrapper">
+            <canvas id="gameCanvas" width="800" height="600"></canvas>
+        </div>
+
+        <div class="resize-handle"></div>
+    </div>
+
+
+    <!-- Status -->
+    <div class="window" id="statusWindow">
+        <div class="window-header" data-i18n="systemStatus">System Status</div>
+
+        <div class="status-bar" id="statusPanel">
+            <div><span data-i18n="integrity">Integrity:</span> <span id="valIntegrity">100%</span></div>
+            <div><span data-i18n="revenue">Revenue:</span> <span id="valMoney">$0</span></div>
+            <div><span data-i18n="uptime">Uptime:</span> <span id="valUptime">0m0s</span></div>
+            <div><span data-i18n="trafficLoad">Traffic:</span> <span id="valTraffic">Lv 1</span></div>
+        </div>
+
+        <div class="resize-handle"></div>
+    </div>
+
+
+    <!-- Upgrades -->
+    <div class="window" id="shopWindow">
+        <div class="window-header" data-i18n="upgrades">Upgrades</div>
+
+        <div class="panel shop">
+            <div id="upgradeTraffic" class="stat-row">
+                <span data-i18n="bandwidth">Bandwidth</span>
+                <button id="btnUpgradeTraffic" onclick="upgradeTraffic()"></button>
             </div>
 
-            <div class="status-bar" id="statusPanel">
-                <div><span data-i18n="integrity">Integrity:</span> <span id="valIntegrity">100%</span></div>
-                <div><span data-i18n="revenue">Revenue:</span> <span id="valMoney">$0</span></div>
-                <div><span data-i18n="uptime">Uptime:</span> <span id="valUptime">0m0s</span></div>
-                <div><span data-i18n="trafficLoad">Traffic:</span> <span id="valTraffic">Lv 1</span></div>
+            <div id="upgradeDPI" class="stat-row">
+                <span data-i18n="dpiModule">DPI Module</span>
+                <button id="btnUpgradeDPI" onclick="upgradeDPI()"></button>
             </div>
 
-
-        <div class="game-layout">
-            <div class="bottom-panels">
-                <!-- Upgrades Panel -->
-                <div class="panel shop">
-                    <h2 data-i18n="upgrades">Upgrades</h2>
-                    <div id="upgradeTraffic" class="stat-row" data-tip="Accélère la fréquence d'apparition des paquets à l'écran">
-                        <span data-i18n="bandwidth">Bandwidth</span>
-                        <button id="btnUpgradeTraffic" onclick="upgradeTraffic()" data>
-                        </button>
-                    </div>
-                    <div id="upgradeDPI" class="stat-row" data-tip="Améliore la capacité d'analyse des paquets">
-                        <span data-i18n="dpiModule">DPI Module</span>
-                        <button id="btnUpgradeDPI" onclick="upgradeDPI()">
-                        </button>
-                    </div>
-                    <div id="upgradeIntel" class="stat-row" data-tip="Améliore la base de données d'analyse des modèles">
-                        <span data-i18n="patternDb">Pattern Analysis DB</span>
-                        <button id="btnUpgradeIntel" onclick="upgradeThreatIntel()">
-                        </button>
-                    </div>
-                    <div id="upgradeLogSorting" class="stat-row" data-tip="Active les filtres du journal reseau">
-                        <span data-i18n="logSorting">Log Sorting</span>
-                        <button id="btnUpgradeLogSorting" onclick="upgradeLogSorting()">
-                        </button>
-                    </div>
-                    <div id="upgradeHeavyBastion" class="stat-row" data-tip="Déploie une unité de défense massive qui absorbe 50% des dégâts critiques">
-                        <span data-i18n="heavyBastion">Heavy Bastion</span>
-                        <button id="btnUpgradeBastion" onclick="deployHeavyBastion()">
-                        </button>
-                    </div>
-                    <div id="upgradeRepair" class="stat-row" style="margin-top: auto" data-tip="Répare le Firewall">
-                        <span data-i18n="repairSystem">Repair System</span>
-                        <button id="btnRepair" onclick="repairSystem()">
-                        </button>
-                    </div>
-                </div>
-                    <!-- ACL Management Panel -->
-                    <div class="panel" id="aclPanel">
-                        <h2 data-i18n="aclTitle">Access Control (ACL)</h2>
-                            <div class="acl-controls">
-                                <div id="shapeFilters"></div>
-                                <div id="colorFilters"></div>
-                                <!-- <div id="sizeFilters"></div> -->
-                                <div id="originFilters"></div>
-                                <div id="rotationFilters"></div>
-                            </div>
-                        <div class="acl-footer" data-i18n="defaultPolicy">
-                                Default Policy: DENY ALL
-                         </div>
-                    </div>
-
-
-                    <!-- Traffic Log Panel -->
-                    <div class="panel" id="logPanel">
-                        <h2 data-i18n="trafficLog">Traffic Log</h2>
-                        <div class="log-filters">
-                            <button onclick="toggleLogType('allow')" id="btnAllow" data-i18n="allow">ALLOW</button>
-                            <button onclick="toggleLogType('drop')" id="btnDrop" data-i18n="drop">DROP</button>
-                            <button onclick="toggleLogType('alert')" id="btnAlert" data-i18n="critical">CRITICAL</button>
-                        </div>
-                        <div class="log-container" id="sysLog"></div>
-                    </div>
-                </div>
+            <div id="upgradeIntel" class="stat-row">
+                <span data-i18n="patternDb">Pattern Analysis DB</span>
+                <button id="btnUpgradeIntel" onclick="upgradeThreatIntel()"></button>
             </div>
 
-        <div class="tutorial-panel">
-            <button id="tutorialCloseBtn" onclick="closeTutorial()">
-                    X
+            <div id="upgradeLogSorting" class="stat-row">
+                <span data-i18n="logSorting">Log Sorting</span>
+                <button id="btnUpgradeLogSorting" onclick="upgradeLogSorting()"></button>
+            </div>
+
+            <div id="upgradeHeavyBastion" class="stat-row">
+                <span data-i18n="heavyBastion">Heavy Bastion</span>
+                <button id="btnUpgradeBastion" onclick="deployHeavyBastion()"></button>
+            </div>
+
+            <div id="upgradeRepair" class="stat-row">
+                <span data-i18n="repairSystem">Repair System</span>
+                <button id="btnRepair" onclick="repairSystem()"></button>
+            </div>
+        </div>
+
+        <div class="resize-handle"></div>
+    </div>
+
+
+    <!-- ACL -->
+    <div class="window" id="aclWindow">
+        <div class="window-header" data-i18n="aclTitle">Access Control (ACL)</div>
+
+        <div class="panel" id="aclPanel">
+            <div class="acl-controls">
+                <div id="shapeFilters"></div>
+                <div id="colorFilters"></div>
+                <div id="originFilters"></div>
+                <div id="rotationFilters"></div>
+            </div>
+
+            <div class="acl-footer" data-i18n="defaultPolicy">
+                Default Policy: DENY ALL
+            </div>
+        </div>
+
+        <div class="resize-handle"></div>
+    </div>
+
+
+    <!-- Log -->
+    <div class="window" id="logWindow">
+        <div class="window-header" data-i18n="trafficLog">Traffic Log</div>
+
+        <div class="panel" id="logPanel">
+            <div class="log-filters">
+                <button onclick="toggleLogType('allow')" id="btnAllow" data-i18n="allow">
+                    ALLOW
                 </button>
+
+                <button onclick="toggleLogType('drop')" id="btnDrop" data-i18n="drop">
+                    DROP
+                </button>
+
+                <button onclick="toggleLogType('alert')" id="btnAlert" data-i18n="critical">
+                    CRITICAL
+                </button>
+            </div>
+
+            <div class="log-container" id="sysLog"></div>
+        </div>
+
+        <div class="resize-handle"></div>
+    </div>
+
+
+    <!-- Tutorial -->
+        <div class="tutorial-panel">
+            <button id="tutorialCloseBtn" onclick="closeTutorial()">X</button>
+
             <h2 id="tutorialTitle">Tutoriel</h2>
             <h3 id="tutorialSubtitle">Tutoriel</h3>
 
@@ -115,18 +153,22 @@
             </div>
 
             <div class="tutorial-controls">
-                <button  id="tutorialPreviousBtn" onclick="previousTutorialStep()" data-i18n="previous">
+                <button id="tutorialPreviousBtn" onclick="previousTutorialStep()">
                     Previous
                 </button>
-                <button id="tutorialNextBtn" onclick="nextTutorialStep()" data-i18n="next">
+
+                <button id="tutorialNextBtn" onclick="nextTutorialStep()">
                     Next
                 </button>
             </div>
+
         </div>
 
 
-        <div id="tooltip" class="tooltip" style="display:none;"></div>
-        <script src="localisation.js"></script>
-        <script src="script.js"></script>
-    </body>
+    <div id="tooltip" class="tooltip" style="display:none;"></div>
+
+    <script src="localisation.js"></script>
+    <script src="script.js"></script>
+
+</body>
 </html>

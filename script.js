@@ -32,6 +32,76 @@ function highlightCanvasElement(name) {
   highlightedCanvasElement = name;
 }
 
+function makeDraggable(windowElement) {
+    const header = windowElement.querySelector(".window-header");
+
+    let dragging = false;
+    let offsetX = 0;
+    let offsetY = 0;
+
+    header.addEventListener("mousedown", (e) => {
+        dragging = true;
+
+        offsetX = e.clientX - windowElement.offsetLeft;
+        offsetY = e.clientY - windowElement.offsetTop;
+    });
+
+    document.addEventListener("mousemove", (e) => {
+        if (!dragging) return;
+
+        windowElement.style.left = `${e.clientX - offsetX}px`;
+        windowElement.style.top = `${e.clientY - offsetY}px`;
+    });
+
+    document.addEventListener("mouseup", () => {
+        dragging = false;
+    });
+
+    makeResizable(windowElement);
+}
+
+function makeResizable(win) {
+    const handle = win.querySelector(".resize-handle");
+    if (handle === null) return;
+
+    let resizing = false;
+    let startX, startY;
+    let startW, startH;
+
+    handle.addEventListener("mousedown", (e) => {
+        resizing = true;
+
+        startX = e.clientX;
+        startY = e.clientY;
+
+        const rect = win.getBoundingClientRect();
+        startW = rect.width;
+        startH = rect.height;
+
+        e.preventDefault();
+        e.stopPropagation(); // prevents drag conflict
+    });
+
+    document.addEventListener("mousemove", (e) => {
+        if (!resizing) return;
+
+        const newW = startW + (e.clientX - startX);
+        const newH = startH + (e.clientY - startY);
+
+        const computed = getComputedStyle(win);
+
+      const minW = parseFloat(computed.minWidth) || 0;
+      const minH = parseFloat(computed.minHeight) || 0;
+
+        win.style.width = `${Math.max(minW, newW)}px`;
+        win.style.height = `${Math.max(minH, newH)}px`;
+    });
+
+    document.addEventListener("mouseup", () => {
+        resizing = false;
+    });
+}
+
 function clearTutorialHighlights() {
   document
     .querySelectorAll(".tutorial-highlight")
@@ -57,7 +127,7 @@ let tutorialOpen = true;
 const tutorialMessages = [
   {
     id: "intro",
-    highlights: ["#gameCanvas"]
+    highlights: ["#gameWindow"]
   },
   {
     id: "firewall",
@@ -69,7 +139,7 @@ const tutorialMessages = [
   },
   {
     id: "acl",
-    highlights: ["#aclPanel"]
+    highlights: ["#aclWindow"]
   },
   {
     id: "malware",
@@ -77,7 +147,7 @@ const tutorialMessages = [
   },
   {
     id: "status",
-    highlights: ["#statusPanel"]
+    highlights: ["#statusWindow"]
   },
   {
     id: "integrity",
@@ -85,7 +155,7 @@ const tutorialMessages = [
   },
   {
     id: "revenue",
-    highlights: ["#valMoney", "#upgradePanel"]
+    highlights: ["#valMoney", "#shopWindow"]
   },
   {
     id: "uptime",
@@ -97,19 +167,19 @@ const tutorialMessages = [
   },
   {
     id: "logs",
-    highlights: ["#logPanel"]
+    highlights: ["#logWindow"]
   },
   {
     id: "loop",
-    highlights: ["#logPanel"]
+    highlights: ["#logWindow"]
   },
   {
     id: "allow",
-    highlights: ["#aclPanel"]
+    highlights: ["#aclWindow"]
   },
   {
     id: "alert",
-    highlights: ["#logPanel"],
+    highlights: ["#logWindow"],
     onEnter: () => {
       addLog(t("logs.malware_breach", { damage: state.malwareDamage, description: getPacketDescription({ shape: "Triangle" }) }),
         "alert"
@@ -118,7 +188,7 @@ const tutorialMessages = [
   },
   {
     id: "adjust",
-    highlights: ["#aclPanel", "#logPanel"]
+    highlights: ["#aclWindow"]
   }
 ];
 
@@ -1289,4 +1359,9 @@ renderFilters();
 updateMalwarePatterns();
 buildTutorialMenu();
 refreshUpgradeButtons();
+makeDraggable(document.getElementById("gameWindow"))
+makeDraggable(document.getElementById("aclWindow"))
+makeDraggable(document.getElementById("logWindow"))
+makeDraggable(document.getElementById("shopWindow"))
+makeDraggable(document.getElementById("statusWindow"))
 gameLoop();
