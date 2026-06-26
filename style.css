@@ -103,69 +103,69 @@ canvas {
 }
 
 #gameWindow {
-    left: 800px;
-    top: 120px;
+    left: 41.67vw;      /* 800 / 1920 */
+    top: 11.11vh;       /* 120 / 1080 */
 
-    width: 820px;
-    height: 650px;
+    width: 42.71vw;     /* 820 / 1920 */
+    height: 60vh;   /* 1200 / 1080 */
 
-    min-width: 300px;
-    min-height: 300px;
+    min-width: 10vw; /* 300 / 1920 */
+    min-height: 20vh;
 
- z-index: 0;
+    z-index: 0;
 }
 
 #statusWindow {
-    left: 800px;
-    top: 790px;
+    left: 41.67vw;
+    top: 73.15vh;       /* 790 / 1080 */
 
-    width: 820px;
+    width: 42.71vw;
+    height: 8vh;
 
-    min-width: 160px;
-    min-height: 70px;
+    min-width: 8.33vw;  /* 160 / 1920 */
+    min-height: 8vh;
 
     z-index: 10;
 }
 
 #shopWindow {
-    left: 15px;
-    top: 15px;
+    left: 0.78vw;       /* 15 / 1920 */
+    top: 1.39vh;        /* 15 / 1080 */
 
-    width: 650px;
-    height: 280px;
+    width: 33.85vw;     /* 650 / 1920 */
+    height: 30vh;
 
-    min-width: 350px;
-    min-height: 100px;
+    min-width: 18.23vw; /* 350 / 1920 */
+    min-height: 10vh;
 
     z-index: 10;
 }
 
 #aclWindow {
-    left: 15px;
-    top: 310px;
+    left: 0.78vw;
+    top: 33vh;       /* 310 / 1080 */
 
-    width: 650px;
-    height: 300px;
+    width: 33.85vw;
+    height: 28vh;
 
-    min-width: 220px;
-    min-height: 150px;
+    min-width: 11.46vw; /* 220 / 1920 */
+    min-height: 10vh;
 
     z-index: 10;
 }
 
 #logWindow {
-    left: 15px;
-    top: 630px;
+    left: 0.78vw;
+    top: 63vh;       /* 630 / 1080 */
 
-    width: 650px;
-    height: 300px;
+    width: 33.85vw;
+    height: 35vh;
 
-    min-width: 230px;
-    min-height: 200px;
+    min-width: 11.98vw; /* 230 / 1920 */
+    min-height: 10vh;
 
     z-index: 10;
 }
-
 .status-bar {
     display: flex;
     flex-wrap: wrap;
