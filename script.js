@@ -404,7 +404,7 @@ function updateMalwarePatterns() {
 // Game State
 let state = {
   integrity: 100,
-  money: 10000,
+  money: 0,
   uptime: 0,
   spawnRate: 0.8, // Seconds between spawns
   packetSpeed: 1.5,
