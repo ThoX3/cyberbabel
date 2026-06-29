@@ -44,10 +44,10 @@
         <div class="window-header" data-i18n="systemStatus">System Status</div>
 
         <div class="status-bar" id="statusPanel">
-            <div><span data-i18n="integrity">Integrity:</span> <span id="valIntegrity">100%</span></div>
-            <div><span data-i18n="revenue">Revenue:</span> <span id="valMoney">$0</span></div>
-            <div><span data-i18n="uptime">Uptime:</span> <span id="valUptime">0m0s</span></div>
-            <div><span data-i18n="trafficLoad">Traffic:</span> <span id="valTraffic">Lv 1</span></div>
+            <div><span data-i18n="integrity" data-tip="tipIntegrity">Integrity:</span> <span id="valIntegrity">100%</span></div>
+            <div><span data-i18n="revenue" data-tip="tipRevenue">Revenue:</span> <span id="valMoney">$0</span></div>
+            <div><span data-i18n="uptime" data-tip="tipUptime">Uptime:</span> <span id="valUptime">0m0s</span></div>
+            <div><span data-i18n="trafficLoad" data-tip="tipTrafficLoad">Traffic:</span> <span id="valTraffic">Lv 1</span></div>
         </div>
 
         <div class="resize-handle"></div>
@@ -60,32 +60,32 @@
 
         <div class="panel shop">
             <div id="upgradeTraffic" class="stat-row">
-                <span data-i18n="bandwidth">Bandwidth</span>
+                <span data-i18n="bandwidth" data-tip="tipBandwidth">Bandwidth</span>
                 <button id="btnUpgradeTraffic" onclick="upgradeTraffic()"></button>
             </div>
 
             <div id="upgradeDPI" class="stat-row">
-                <span data-i18n="dpiModule">DPI Module</span>
+                <span data-i18n="dpiModule" data-tip="tipDPI">DPI Module</span>
                 <button id="btnUpgradeDPI" onclick="upgradeDPI()"></button>
             </div>
 
             <div id="upgradeIntel" class="stat-row">
-                <span data-i18n="patternDb">Pattern Analysis DB</span>
+                <span data-i18n="patternDb" data-tip="tipPatternDb">Pattern Analysis DB</span>
                 <button id="btnUpgradeIntel" onclick="upgradeThreatIntel()"></button>
             </div>
 
             <div id="upgradeLogSorting" class="stat-row">
-                <span data-i18n="logSorting">Log Sorting</span>
+                <span data-i18n="logSorting" data-tip="tipLogSorting">Log Sorting</span>
                 <button id="btnUpgradeLogSorting" onclick="upgradeLogSorting()"></button>
             </div>
 
             <div id="upgradeHeavyBastion" class="stat-row">
-                <span data-i18n="heavyBastion">Heavy Bastion</span>
+                <span data-i18n="heavyBastion" data-tip="tipHeavyBastion">Heavy Bastion</span>
                 <button id="btnUpgradeBastion" onclick="deployHeavyBastion()"></button>
             </div>
 
             <div id="upgradeRepair" class="stat-row">
-                <span data-i18n="repairSystem">Repair System</span>
+                <span data-i18n="repairSystem" data-tip="tipRepairSystem">Repair System</span>
                 <button id="btnRepair" onclick="repairSystem()"></button>
             </div>
         </div>
@@ -121,15 +121,15 @@
 
         <div class="panel" id="logPanel">
             <div class="log-filters">
-                <button onclick="toggleLogType('allow')" id="btnAllow" data-i18n="allow">
+                <button onclick="toggleLogType('allow')" id="btnAllow" data-i18n="allow" data-tip="tipAllow">
                     ALLOW
                 </button>
 
-                <button onclick="toggleLogType('drop')" id="btnDrop" data-i18n="drop">
+                <button onclick="toggleLogType('drop')" id="btnDrop" data-i18n="drop" data-tip="tipDrop">
                     DROP
                 </button>
 
-                <button onclick="toggleLogType('alert')" id="btnAlert" data-i18n="critical">
+                <button onclick="toggleLogType('alert')" id="btnAlert" data-i18n="critical" data-tip="tipCritical">
                     CRITICAL
                 </button>
             </div>

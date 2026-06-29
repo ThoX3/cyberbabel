@@ -9,7 +9,7 @@ document.addEventListener("mouseover", (e) => {
   if (!el) return;
 
   tooltip.style.display = "block";
-  tooltip.innerHTML = el.getAttribute("data-tip");
+  tooltip.innerHTML = t(el.getAttribute("data-tip"));
 });
 
 document.addEventListener("mousemove", (e) => {
@@ -875,7 +875,7 @@ function renderFilterGroup(containerId, category, values) {
 
   container.innerHTML = `
     <div class="filter-group">
-      <div data-i18n=${category} class="filter-group-title">${t(category)}</div>
+      <div data-tip="tip${category.charAt(0).toUpperCase() + category.slice(1) + "Filters"}" data-i18n=${category} class="filter-group-title">${t(category)}</div>
       <div class="filter-buttons">
         ${values.map(value => {
           const icon = filterEmojis[value] ?? "❓";
